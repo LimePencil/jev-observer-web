@@ -8,14 +8,24 @@ import {
   List,
   X,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { site } from "@/lib/site";
 export function Header() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   return (
-    <header className="site-header">
+    <header
+      className="site-header"
+      onKeyDown={(event) => {
+        if (open && event.key === "Escape") {
+          event.preventDefault();
+          setOpen(false);
+          menuButton.current?.focus();
+        }
+      }}
+    >
       <div className="container nav-inner">
         <Link className="wordmark" href="/" onClick={() => setOpen(false)}>
           <Aperture size={28} weight="duotone" aria-hidden="true" />
@@ -44,6 +54,7 @@ export function Header() {
             Install Observer <ArrowUpRight size={15} />
           </Link>
           <button
+            ref={menuButton}
             className="icon-button mobile-menu-button"
             type="button"
             onClick={() => setOpen(!open)}
@@ -60,14 +71,6 @@ export function Header() {
           className="mobile-nav"
           id="mobile-navigation"
           aria-label="Mobile navigation"
-          onKeyDown={(event) => {
-            if (event.key === "Escape") {
-              setOpen(false);
-              document
-                .querySelector<HTMLButtonElement>(".mobile-menu-button")
-                ?.focus();
-            }
-          }}
         >
           <Link href="/#tour" onClick={() => setOpen(false)}>
             Product <ArrowUpRight size={17} />

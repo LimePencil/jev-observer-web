@@ -90,24 +90,30 @@ export function ProductTour() {
           <ArrowsOut size={19} />
         </button>
       </div>
-      <div
-        className="tour-panel"
-        role="tabpanel"
-        id={`panel-${view.id}`}
-        aria-labelledby={`tab-${view.id}`}
-        tabIndex={0}
-      >
-        <div key={view.id} className="tour-transition">
-          <Image
-            src={view.image}
-            width={2160}
-            height={1425}
-            sizes="(max-width: 768px) calc(100vw - 44px), (max-width: 1248px) calc(100vw - 80px), 1168px"
-            alt={view.alt}
-            quality={90}
-          />
+      {views.map((item, index) => (
+        <div
+          key={item.id}
+          className="tour-panel"
+          role="tabpanel"
+          id={`panel-${item.id}`}
+          aria-labelledby={`tab-${item.id}`}
+          hidden={selected !== index}
+          tabIndex={0}
+        >
+          {selected === index && (
+            <div className="tour-transition">
+              <Image
+                src={item.image}
+                width={2160}
+                height={1425}
+                sizes="(max-width: 768px) calc(100vw - 44px), (max-width: 1248px) calc(100vw - 80px), 1168px"
+                alt={item.alt}
+                quality={90}
+              />
+            </div>
+          )}
         </div>
-      </div>
+      ))}
       <div className="tour-caption">
         <p aria-live="polite">{view.description}</p>
         <span>Real dashboard. Synthetic sample data.</span>

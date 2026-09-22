@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -8,12 +8,27 @@ import {
   TerminalWindow,
 } from "@phosphor-icons/react/dist/ssr";
 import { getDocs, sections } from "@/lib/docs";
-export const metadata: Metadata = {
-  title: "Documentation",
-  description:
-    "Install Jev Observer, connect your application, explore your local history, and learn how to contribute.",
-  alternates: { canonical: "/docs" },
-};
+import { site } from "@/lib/site";
+export async function generateMetadata(
+  _props: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const description =
+    "Install Jev Observer, connect your application, explore your local history, and learn how to contribute.";
+  return {
+    title: "Documentation",
+    description,
+    alternates: { canonical: "/docs" },
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      title: `Documentation | ${site.name}`,
+      description,
+      url: "/docs",
+      images: (await parent).openGraph?.images,
+    },
+  };
+}
 export default function DocsHome() {
   const docs = getDocs();
   const icons = [TerminalWindow, BookOpen, Code];

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -13,11 +13,14 @@ export function generateStaticParams() {
   return getDocs().map((doc) => ({ slug: doc.slug }));
 }
 export const dynamicParams = false;
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: Promise<{ slug: string }>;
+  },
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const { slug } = await params;
   const doc = getDoc(slug);
   if (!doc) return {};
@@ -26,8 +29,12 @@ export async function generateMetadata({
     description: doc.description,
     alternates: { canonical: `/docs/${slug}` },
     openGraph: {
-      title: `${doc.title} | Jev Observer`,
+      type: "website",
+      siteName: site.name,
+      title: `${doc.title} | ${site.name}`,
       description: doc.description,
+      url: `/docs/${slug}`,
+      images: (await parent).openGraph?.images,
     },
   };
 }

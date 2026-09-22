@@ -20,7 +20,7 @@ Open http://localhost:3000. This website has no dependency on a running Observer
 3. Deploy. No environment variables are required. The website does not deploy the Observer proxy or its SQLite database.
 4. After assigning a production domain, optionally set `NEXT_PUBLIC_SITE_URL` to the full HTTPS origin (for example your own domain) and redeploy. Without it, metadata and sitemap use Vercel's production URL; local builds use `http://localhost:3000`.
 
-The site is prepared for Vercel but does not create a Vercel project or deploy automatically from this setup. The owner controls deployment.
+Production is hosted at [jev-observer-web.vercel.app](https://jev-observer-web.vercel.app). The Vercel project is connected to this repository and deploys changes pushed to `main`.
 
 ## Verify
 
@@ -33,6 +33,12 @@ npm test
 ```
 
 Playwright starts the production server. It checks desktop/mobile navigation, the product-tour tabs and screenshot dialog, documentation search, all doc routes and internal anchors, clipboard behavior, persistent light/dark themes, reduced motion, and WCAG accessibility using axe. CI repeats these checks on pushes and pull requests.
+
+To run the browser checks against a deployment without starting a local server:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
+```
 
 ## Content and assets
 

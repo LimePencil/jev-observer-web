@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const remoteBaseURL = process.env.PLAYWRIGHT_BASE_URL;
+const localBaseURL = "http://127.0.0.1:3100";
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -10,7 +13,7 @@ export default defineConfig({
   expect: { timeout: 8_000 },
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: remoteBaseURL || localBaseURL,
     colorScheme: "light",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
@@ -28,10 +31,12 @@ export default defineConfig({
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
   ],
-  webServer: {
-    command: "npm run start",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: true,
-    timeout: 60_000,
-  },
+  webServer: remoteBaseURL
+    ? undefined
+    : {
+        command: "npm run start -- --port 3100",
+        url: localBaseURL,
+        reuseExistingServer: false,
+        timeout: 60_000,
+      },
 });

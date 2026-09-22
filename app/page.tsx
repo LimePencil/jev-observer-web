@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -17,6 +18,11 @@ import { Reveal } from "@/components/reveal";
 import { ProductTour } from "@/components/product-tour";
 import { CodeBlock } from "@/components/code-block";
 import { installCommand, site } from "@/lib/site";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default function Home() {
   return (
     <main id="main">
