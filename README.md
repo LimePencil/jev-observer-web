@@ -43,7 +43,7 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 ## Content and assets
 
 - `app/page.tsx`: landing page. Interactive leaves live in `components/`.
-- `components/hero-flow.tsx`: interactive request-flow explainer with synthetic answers, pause/replay controls, and reduced-motion support. Its visual styling is isolated in `hero-flow.module.css`.
+- `components/hero-flow.tsx`: visual request-flow explainer with graphical synthetic answers, brief reveal animations, and reduced-motion support. Its visual styling is isolated in `hero-flow.module.css`.
 - `content/docs/*.md`: documentation with `title`, `description`, `section`, and numeric `order` frontmatter. Sections are `Getting started`, `User guide`, and `Developer guide`. Local full-text search, sidebar, page metadata, and sitemap are generated from this content.
 - `app/globals.css`: semantic light/dark tokens, layouts, responsive rules, and reduced-motion support. Typography uses locally bundled Geist fonts through `next/font/local`.
 - `design/research.md`: reference-site research, design decisions, and content boundaries.

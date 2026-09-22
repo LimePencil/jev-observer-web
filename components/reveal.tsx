@@ -18,18 +18,20 @@ export function Reveal({
     if (!element || !("IntersectionObserver" in window)) return;
     // Do not delay or reanimate the initial viewport and its LCP content.
     if (element.getBoundingClientRect().top < window.innerHeight) return;
+    element.classList.add("reveal-ready");
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          element.classList.add("reveal-visible");
-        }
+        element.classList.add("reveal-visible");
         observer.disconnect();
       },
       { threshold: 0.12 },
     );
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      element.classList.remove("reveal-ready", "reveal-visible");
+    };
   }, []);
   return (
     <div

@@ -13,7 +13,7 @@ Reviewed before implementation on 2026-09-22:
 Greenfield site for developers evaluating a local observability tool. Custom aesthetic using Tailwind v4 and native CSS, not an imitation of a formal design system.
 
 DESIGN_VARIANCE: 6. Asymmetric hero, generous space, alternating composition types.
-MOTION_INTENSITY: 6. Request-flow animation, intro sequence, scroll reveals, feedback and product-tour transitions; reduced-motion fallback. Native CSS, the Web Animations API and IntersectionObserver keep motion isolated and lightweight.
+MOTION_INTENSITY: 5. Finite request and answer reveals, staggered scroll reveals, feedback and product-tour transitions; reduced-motion fallback. Native CSS, the Web Animations API and IntersectionObserver keep motion isolated and lightweight. No looping hero motion.
 VISUAL_DENSITY: 3. Short marketing copy; detailed content lives in docs.
 
 Palette: neutral off-white / charcoal, one muted emerald accent. System light/dark with manual toggle. Geist + Geist Mono, locally bundled. Radii: 8px for controls, 16px for panels. Z-index: 10 sticky header, 20 mobile navigation, 30 docs search overlay.
@@ -32,7 +32,13 @@ Live reference pages were researched and visually inspected:
 
 Observer's diagram shows request and response paths between an application, Observer, and a provider, plus local capture. Visitors select routing, urgency, or frustration to inspect a typed answer. Values come from `sample_records()` at index 5 in the application source: the Support inbox sample returns technical routing, 0.88 urgency, and a 1.7 frustration score. These are explicitly synthetic values, not performance or accuracy claims.
 
-Motion uses transform/opacity keyframes sampled along SVG paths, with no new animation dependency. A pause control freezes the particles; selecting the central Observer button replays them. Animation suspends outside the viewport and in hidden browser tabs. Reduced motion removes particle and ambient animations while retaining all sample answers and controls. Native radio inputs provide keyboard and touch selection, and a persistent live region announces answer changes.
+Motion uses finite transform/opacity keyframes sampled along SVG paths, with no new animation dependency. A request reveals once when the graphic enters view and again when a visitor selects another question. Reduced motion removes animations while retaining every answer. Native radio inputs provide keyboard and touch selection, and a persistent live region announces answer changes.
+
+## Graphics and reveal refinement
+
+Further feedback requested more graphics, less text, simple reveals, and stronger emphasis. The revised hero removes toolbar instructions, full visible question sentences, type badges, and textual distributions. A larger Observer mark anchors the flow; a bar chart, probability ring, and score dots make the selected answer visual. Synthetic-data labeling and the probability caveat remain visible, and full question/distribution descriptions remain available to assistive technology.
+
+The headline's supporting copy is reduced to requests, answers, usage, and the local dashboard. Tour and workflow introductions are shortened; green emphasis highlights the key phrases. Product screenshots reveal separately after their headings. Below-fold sections reveal once, while initial-viewport content remains immediately visible. Content stays readable with JavaScript disabled or reduced motion enabled.
 
 ## Content authority
 

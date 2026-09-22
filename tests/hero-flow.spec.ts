@@ -57,32 +57,29 @@ test("hero questions reveal their sample answers with mouse and keyboard", async
   await expect(figure.getByText("Technical", { exact: true })).toBeVisible();
 });
 
-test("request animation pauses, plays, and replays without changing the selected question", async ({
+test("request reveal finishes and replays when choosing a question", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const figure = heroFlow(page);
   await figure.scrollIntoViewIfNeeded();
-  await expect.poll(() => runningParticles(figure)).toBeGreaterThan(0);
+  await expect.poll(() => runningParticles(figure), { timeout: 3000 }).toBe(0);
 
-  await figure.getByRole("button", { name: "Pause request animation" }).click();
-  await expect(
-    figure.getByRole("button", { name: "Play request animation" }),
-  ).toBeVisible();
-  await expect.poll(() => runningParticles(figure)).toBe(0);
-
-  await figure.getByRole("button", { name: "Play request animation" }).click();
-  await expect.poll(() => runningParticles(figure)).toBeGreaterThan(0);
   await figure.getByText("Urgency", { exact: true }).click();
-  await figure.getByRole("button", { name: "Pause request animation" }).click();
-  await expect.poll(() => runningParticles(figure)).toBe(0);
-
-  await figure.getByRole("button", { name: "Replay sample request" }).click();
-  await expect(
-    figure.getByRole("button", { name: "Pause request animation" }),
-  ).toBeVisible();
-  await expect.poll(() => runningParticles(figure)).toBeGreaterThan(0);
+  await expect
+    .poll(() => runningParticles(figure), { timeout: 1000 })
+    .toBeGreaterThan(0);
+  const animationEndTimes = await figure.evaluate((element) =>
+    element
+      .getAnimations({ subtree: true })
+      .map((animation) => animation.effect?.getComputedTiming().endTime),
+  );
+  expect(animationEndTimes.length).toBeGreaterThan(0);
+  expect(animationEndTimes.every((endTime) => Number.isFinite(endTime))).toBe(
+    true,
+  );
+  await expect.poll(() => runningParticles(figure), { timeout: 3000 }).toBe(0);
   await expect(figure.getByRole("radio", { name: "Urgency" })).toBeChecked();
   await expect(figure.getByText("88%", { exact: true })).toBeVisible();
 });
@@ -104,9 +101,7 @@ test("reduced motion keeps hero questions usable without animated particles", as
     figure.getByRole("radio", { name: "Frustration" }),
   ).toBeChecked();
   await expect(figure.getByText("1.7 / 2", { exact: true })).toBeVisible();
-  await figure.getByRole("button", { name: "Replay sample request" }).click();
   await expect.poll(() => runningParticles(figure)).toBe(0);
-  await expect(figure.getByText("1.7 / 2", { exact: true })).toBeVisible();
 });
 
 for (const width of [320, 390]) {

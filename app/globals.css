@@ -146,6 +146,9 @@ h3 {
   font-size: 17px;
   line-height: 1.65;
 }
+.section-heading h2 span {
+  color: var(--accent-text);
+}
 .eyebrow {
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
@@ -331,7 +334,7 @@ a:hover > .text-link svg {
 }
 .hero {
   display: grid;
-  grid-template-columns: 1.04fr 1fr;
+  grid-template-columns: 0.95fr 1.05fr;
   align-items: center;
   min-height: 574px;
   padding-block: 64px 69px;
@@ -343,7 +346,7 @@ a:hover > .text-link svg {
   min-width: 0;
 }
 .hero h1 {
-  font-size: clamp(52px, 5.7vw, 77px);
+  font-size: clamp(52px, 5.4vw, 73px);
   line-height: 1.055;
   font-weight: 520;
   letter-spacing: -0.066em;
@@ -358,6 +361,10 @@ a:hover > .text-link svg {
   line-height: 1.65;
   max-width: 400px;
   margin-top: 25px;
+}
+.hero-description strong {
+  color: var(--text);
+  font-weight: 560;
 }
 .hero .button-row {
   margin-top: 31px;
@@ -1294,8 +1301,18 @@ a:hover > .text-link svg {
   margin-top: 28px;
 }
 @media (prefers-reduced-motion: no-preference) {
+  .reveal-ready {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .reveal-ready:focus-within {
+    opacity: 1;
+    transform: none;
+  }
   .reveal-visible {
-    animation: section-enter 0.65s cubic-bezier(0.22, 1, 0.36, 1)
+    opacity: 1;
+    transform: none;
+    animation: section-enter 0.8s cubic-bezier(0.22, 1, 0.36, 1)
       var(--reveal-delay, 0s) both;
   }
   .tour-transition {
@@ -1303,8 +1320,8 @@ a:hover > .text-link svg {
   }
   @keyframes section-enter {
     from {
-      opacity: 0.7;
-      transform: translateY(12px);
+      opacity: 0;
+      transform: translateY(28px);
     }
     to {
       opacity: 1;

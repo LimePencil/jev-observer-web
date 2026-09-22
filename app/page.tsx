@@ -34,8 +34,9 @@ export default function Home() {
             <span>In clear view.</span>
           </h1>
           <p className="hero-description hero-enter">
-            Understand your Jev questions, inspect requests, and track usage.
-            All in one local dashboard.
+            <strong>Requests. Answers. Usage.</strong>
+            <br />
+            One local dashboard.
           </p>
           <div className="button-row hero-enter">
             <Link href="/docs/installation" className="button button-primary">
@@ -73,12 +74,12 @@ export default function Home() {
       >
         <Reveal>
           <div className="section-heading">
-            <h2 id="tour-title">From a request to the full picture.</h2>
-            <p>
-              Spot a failure. Open an answer. Follow a question over time.
-              <br className="desktop-break" /> The context stays connected.
-            </p>
+            <h2 id="tour-title">
+              Go straight to <span>the answer.</span>
+            </h2>
           </div>
+        </Reveal>
+        <Reveal delay={0.12}>
           <ProductTour />
         </Reveal>
       </section>
@@ -88,11 +89,9 @@ export default function Home() {
       >
         <Reveal>
           <div className="section-heading">
-            <h2 id="approach-title">Your workflow. A little more visible.</h2>
-            <p>
-              Point your supported SDK at Observer. Keep your credentials in
-              your application.
-            </p>
+            <h2 id="approach-title">
+              Your workflow. <span>Now visible.</span>
+            </h2>
           </div>
         </Reveal>
         <div className="approach-grid">
@@ -123,30 +122,24 @@ export default function Home() {
             </div>
             <div className="flow-note">
               <Database size={16} />
-              <span>Captured history stays in your local SQLite database.</span>
+              <span>History in local SQLite.</span>
             </div>
             <div className="panel-copy">
-              <h3>A small change at the source.</h3>
-              <p>
-                Use the local origin as your SDK base URL. Observer forwards
-                supported requests and records a bounded copy for inspection.
-              </p>
+              <h3>Connect once. See more.</h3>
+              <p>Point your supported SDK at Observer.</p>
               <Link href="/docs/connecting" className="text-link">
                 Connect your application <ArrowUpRight size={17} />
               </Link>
             </div>
           </Reveal>
           <Reveal className="privacy-panel" delay={0.1}>
-            <ShieldCheck size={34} weight="duotone" />
+            <ShieldCheck size={48} weight="duotone" />
             <h3>
               Local history.
               <br />
               Under your control.
             </h3>
-            <p>
-              No analytics or automatic event uploads. Export your records, set
-              retention, and decide what to capture.
-            </p>
+            <p>Local storage. No automatic event uploads.</p>
             <div className="privacy-facts">
               <span>
                 Input-state storage <strong>Opt-in</strong>
@@ -178,8 +171,7 @@ export default function Home() {
               at home.
             </h2>
             <p>
-              Build Observer, then explore 720 synthetic requests. No API key
-              needed for the sample.
+              <strong>720 synthetic requests.</strong> No API key needed.
             </p>
             <div className="requirements">
               <span>Before you begin</span>
@@ -209,33 +201,26 @@ export default function Home() {
       <section className="section container" aria-labelledby="docs-title">
         <Reveal>
           <div className="section-heading">
-            <h2 id="docs-title">A good place to go deeper.</h2>
-            <p>
-              Start with your first request. Stay to understand how it works.
-            </p>
+            <h2 id="docs-title">
+              Make it <span>your own.</span>
+            </h2>
           </div>
           <div className="docs-links">
             <Link href="/docs/dashboard" className="doc-feature">
-              <BookOpen size={29} weight="duotone" />
+              <BookOpen size={40} weight="duotone" />
               <div>
                 <h3>For users</h3>
-                <p>
-                  Explore requests, understand question groups, and make your
-                  history useful.
-                </p>
+                <p>Find the answers in your history.</p>
                 <span className="text-link">
                   Read the user guide <ArrowUpRight size={17} />
                 </span>
               </div>
             </Link>
             <Link href="/docs/development" className="doc-feature">
-              <Code size={29} weight="duotone" />
+              <Code size={40} weight="duotone" />
               <div>
                 <h3>For developers</h3>
-                <p>
-                  Set up your environment, follow the architecture, and
-                  contribute a change.
-                </p>
+                <p>Build, extend, and contribute.</p>
                 <span className="text-link">
                   Read the developer guide <ArrowUpRight size={17} />
                 </span>
@@ -249,9 +234,8 @@ export default function Home() {
           <div className="open-source-inner">
             <GitBranch size={23} />
             <p>
-              <strong>MIT licensed. Still taking shape.</strong> Jev Observer is
-              a working prototype. Source access currently requires a repository
-              invitation. The guides cover its capabilities and limits.
+              <strong>MIT licensed. Still taking shape.</strong> A working
+              prototype. Source access requires a repository invitation.
             </p>
             <a
               href={site.repo}

@@ -33,12 +33,12 @@ Local production server, Chromium, Lighthouse mobile defaults. These are lab res
 
 | Category       | Score |
 | -------------- | ----- |
-| Performance    | 97    |
+| Performance    | 99    |
 | Accessibility  | 100   |
 | Best practices | 100   |
 | SEO            | 100   |
 
-First Contentful Paint: 0.9s. Largest Contentful Paint: 2.5s. Total Blocking Time: 90ms. Cumulative Layout Shift: 0. These measurements include the interactive hero. Removing the initial transparent hero frame and reserving font preload for the main text improved the first hero audit from 94 to 97.
+First Contentful Paint: 1.1s. Largest Contentful Paint: 2.1s. Total Blocking Time: 60ms. Cumulative Layout Shift: 0. These measurements include the larger graphics and finite reveal animations.
 
 Native CSS, the Web Animations API, and IntersectionObserver keep motion lightweight. Content is rendered without JavaScript, entry reveals skip the initial viewport, and every animation respects reduced-motion preferences. The header wordmark uses its visible text as its accessible name.
 
@@ -46,11 +46,12 @@ Native CSS, the Web Animations API, and IntersectionObserver keep motion lightwe
 
 The original optical bitmap has been replaced by a request-flow explainer after research into Linear, Resend, and Trigger.dev. See `design/research.md` for specific observations and sample-data provenance.
 
-- Animated request, response, and local-capture paths; sample-answer selection by mouse, touch, and native keyboard radio navigation.
-- Pause/play and replay controls verified against actual animation states. Pausing retains particle positions.
-- Reduced motion suppresses particle and ambient animations while sample selection remains usable.
-- Motion suspends when the figure leaves the viewport or the browser tab is hidden.
+- Request, response, and local-capture paths reveal once; sample-answer selection works by mouse, touch, and native keyboard radio navigation.
+- All hero animations finish; changing questions triggers another brief reveal. No looping particles or pause/play controls remain.
+- Bar, ring, and dot graphics express the synthetic answer data, with larger results and less visible explanatory copy.
+- Reduced motion suppresses animations while sample selection remains usable. Below-fold sections reveal once; initial-viewport content is visible immediately.
 - Visual review covered desktop, 768px tablet, and mobile in both themes. All answer states fit 320px and 390px viewports.
+- Manually verified below-fold content after scroll, after changing motion preferences, and with JavaScript disabled.
 - Build, lint, formatting, TypeScript, and all 41 browser tests pass against the production build.
 
 ## Design preflight
