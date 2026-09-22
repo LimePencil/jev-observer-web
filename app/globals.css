@@ -331,15 +331,16 @@ a:hover > .text-link svg {
 }
 .hero {
   display: grid;
-  grid-template-columns: 1.08fr 1fr;
+  grid-template-columns: 1.04fr 1fr;
   align-items: center;
   min-height: 574px;
   padding-block: 64px 69px;
-  gap: 0;
+  gap: 48px;
 }
 .hero-copy {
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 .hero h1 {
   font-size: clamp(52px, 5.7vw, 77px);
@@ -365,27 +366,6 @@ a:hover > .text-link svg {
 .hero-art {
   min-width: 0;
   position: relative;
-  margin-right: -20px;
-  margin-left: -20px;
-}
-.lens-image {
-  width: 100%;
-  aspect-ratio: 1.15;
-  object-fit: cover;
-  border-radius: 16px;
-  mix-blend-mode: multiply;
-}
-[data-theme="dark"] .lens-image {
-  mix-blend-mode: normal;
-  border-radius: 16px;
-  opacity: 0.9;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .lens-image {
-    mix-blend-mode: normal;
-    border-radius: 16px;
-    opacity: 0.9;
-  }
 }
 .principles-strip {
   border-block: 1px solid var(--line);
@@ -1350,11 +1330,9 @@ a:hover > .text-link svg {
   }
   @keyframes enter {
     from {
-      opacity: 0;
       transform: translateY(18px);
     }
     to {
-      opacity: 1;
       transform: translateY(0);
     }
   }
@@ -1371,6 +1349,10 @@ a:hover > .text-link svg {
   }
   .hero {
     min-height: 520px;
+    gap: 26px;
+  }
+  .hero h1 {
+    font-size: clamp(44px, 5.5vw, 66px);
   }
   .hero .button-row {
     gap: 13px;
@@ -1461,7 +1443,7 @@ a:hover > .text-link svg {
   .hero {
     grid-template-columns: 1fr;
     padding-block: 42px 22px;
-    gap: 13px;
+    gap: 38px;
     min-height: auto;
   }
   .hero h1 {
@@ -1486,13 +1468,9 @@ a:hover > .text-link svg {
     gap: 6px;
   }
   .hero-art {
-    margin: 0 -6px;
     justify-self: center;
-    width: min(100%, 460px);
-  }
-  .lens-image {
-    aspect-ratio: 1.8;
-    object-fit: cover;
+    width: min(100%, 520px);
+    padding-bottom: 15px;
   }
   .principles-inner {
     display: grid;

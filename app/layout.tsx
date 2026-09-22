@@ -13,6 +13,7 @@ const mono = localFont({
   src: "../public/fonts/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
   display: "swap",
+  preload: false,
 });
 export const metadata: Metadata = {
   metadataBase: siteUrl(),

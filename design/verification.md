@@ -6,9 +6,10 @@ Reviewed on 2026-09-22 against a production build of the website.
 
 - `npm run build`: passes; landing page, docs index, all 10 guides, metadata images, robots and sitemap are prerendered.
 - `npm run lint`, `npm run typecheck`, and `npm run format:check`: pass.
-- `npm test`: 31 passed, one intentional skip (desktop does not have mobile navigation), zero failures.
+- `npm test`: 41 passed, one intentional skip (desktop does not have mobile navigation), zero failures.
 - Browser coverage: desktop and mobile, real screenshot tabs with keyboard navigation, screenshot dialog and focus restoration, all docs routes and internal anchors, full-text search, clipboard contents, persisted themes, reduced motion, and horizontal overflow.
 - All eight axe scans pass: homepage and installation, light and dark themes, desktop and mobile.
+- All six additional hero scans pass: routing, urgency, and frustration answers in both light and dark themes.
 - Manual checks: system themes, search empty state, 404 page, hero entry animation, scroll reveals, and visual review of desktop/mobile landing and documentation.
 - Mobile document and body width both equal the 390px viewport after correcting code-block grid constraints.
 - Production dependency audit: no known vulnerabilities at review time.
@@ -32,14 +33,25 @@ Local production server, Chromium, Lighthouse mobile defaults. These are lab res
 
 | Category       | Score |
 | -------------- | ----- |
-| Performance    | 99    |
+| Performance    | 97    |
 | Accessibility  | 100   |
 | Best practices | 100   |
 | SEO            | 100   |
 
-First Contentful Paint: 0.8s. Largest Contentful Paint: 1.9s. Total Blocking Time: 80ms. Cumulative Layout Shift: 0.
+First Contentful Paint: 0.9s. Largest Contentful Paint: 2.5s. Total Blocking Time: 90ms. Cumulative Layout Shift: 0. These measurements include the interactive hero. Removing the initial transparent hero frame and reserving font preload for the main text improved the first hero audit from 94 to 97.
 
-Native CSS animations and an IntersectionObserver keep motion lightweight. Content is rendered without JavaScript, entry reveals skip the initial viewport, and every animation respects reduced-motion preferences. The header wordmark uses its visible text as its accessible name.
+Native CSS, the Web Animations API, and IntersectionObserver keep motion lightweight. Content is rendered without JavaScript, entry reveals skip the initial viewport, and every animation respects reduced-motion preferences. The header wordmark uses its visible text as its accessible name.
+
+## Interactive hero
+
+The original optical bitmap has been replaced by a request-flow explainer after research into Linear, Resend, and Trigger.dev. See `design/research.md` for specific observations and sample-data provenance.
+
+- Animated request, response, and local-capture paths; sample-answer selection by mouse, touch, and native keyboard radio navigation.
+- Pause/play and replay controls verified against actual animation states. Pausing retains particle positions.
+- Reduced motion suppresses particle and ambient animations while sample selection remains usable.
+- Motion suspends when the figure leaves the viewport or the browser tab is hidden.
+- Visual review covered desktop, 768px tablet, and mobile in both themes. All answer states fit 320px and 390px viewports.
+- Build, lint, formatting, TypeScript, and all 41 browser tests pass against the production build.
 
 ## Design preflight
 

@@ -43,11 +43,12 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 ## Content and assets
 
 - `app/page.tsx`: landing page. Interactive leaves live in `components/`.
+- `components/hero-flow.tsx`: interactive request-flow explainer with synthetic answers, pause/replay controls, and reduced-motion support. Its visual styling is isolated in `hero-flow.module.css`.
 - `content/docs/*.md`: documentation with `title`, `description`, `section`, and numeric `order` frontmatter. Sections are `Getting started`, `User guide`, and `Developer guide`. Local full-text search, sidebar, page metadata, and sitemap are generated from this content.
 - `app/globals.css`: semantic light/dark tokens, layouts, responsive rules, and reduced-motion support. Typography uses locally bundled Geist fonts through `next/font/local`.
 - `design/research.md`: reference-site research, design decisions, and content boundaries.
 - `design/screenshots.md`: provenance of the actual Observer sample-mode captures.
-- `design/image-prompt.md`: built-in image-generation prompt and provenance for `public/images/observer-lens.webp`.
+- `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
 The website repository is private. The application source repository was also private when reviewed, so the site explicitly notes that source builds and GitHub links require repository access. Before a public application release, update that copy to match the actual source availability. Do not imply a packaged installer, verified cross-platform distribution, universal provider support, production readiness, or lossless capture.

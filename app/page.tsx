@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -17,6 +16,7 @@ import {
 import { Reveal } from "@/components/reveal";
 import { ProductTour } from "@/components/product-tour";
 import { CodeBlock } from "@/components/code-block";
+import { HeroFlow } from "@/components/hero-flow";
 import { installCommand, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -47,15 +47,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-art hero-enter">
-          <Image
-            src="/images/observer-lens.webp"
-            alt="Clear concentric glass lenses with a green center, an illustration of bringing decisions into focus."
-            width={1536}
-            height={1024}
-            sizes="(max-width: 768px) 92vw, 55vw"
-            preload
-            className="lens-image"
-          />
+          <HeroFlow />
         </div>
       </section>
       <div className="principles-strip">
