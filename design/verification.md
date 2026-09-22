@@ -37,3 +37,11 @@ Custom greenfield direction; variance 6, motion 5, density 3. One green accent, 
 Sibling project: `/home/limepencil/dev/jev-observer-web`.
 Repository: `LimePencil/jev-observer-web`, verified private.
 The README contains Vercel import instructions. Deployment and the eventual application README link remain with the owner, as requested.
+
+## Hosted CI limitation
+
+The first GitHub Actions run did not start any steps. GitHub's check annotation reported: "The job was not started because recent account payments have failed or your spending limit needs to be increased."
+
+Run: https://github.com/LimePencil/jev-observer-web/actions/runs/35699562361
+
+This is an account-level runner restriction, not a website build or test failure. The workflow remains configured, and the same build, lint, TypeScript and browser checks were run locally. The owner can resolve GitHub billing and rerun the workflow when desired. Vercel deployment has not been attempted.
