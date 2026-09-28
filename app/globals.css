@@ -271,6 +271,12 @@ a:hover > .text-link svg {
   justify-content: space-between;
   gap: 32px;
 }
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
 .wordmark {
   display: inline-flex;
   align-items: center;
@@ -287,6 +293,16 @@ a:hover > .text-link svg {
 .wordmark-light {
   font-weight: 400;
   letter-spacing: -0.045em;
+}
+.beta-badge {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 4px 6px;
+  color: var(--accent-text);
+  background: var(--surface-subtle);
+  font: 600 10px/1 var(--font-geist-mono), monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .desktop-nav {
   display: flex;
@@ -1710,6 +1726,16 @@ a:hover > .text-link svg {
 @media (max-width: 360px) {
   .container {
     padding-inline: 16px;
+  }
+  .brand {
+    gap: 6px;
+  }
+  .wordmark {
+    gap: 7px;
+    font-size: 17px;
+  }
+  .wordmark > svg {
+    width: 22px;
   }
   .hero .button-row {
     gap: 11px;

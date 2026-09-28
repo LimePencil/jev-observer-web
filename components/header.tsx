@@ -27,12 +27,15 @@ export function Header() {
       }}
     >
       <div className="container nav-inner">
-        <Link className="wordmark" href="/" onClick={() => setOpen(false)}>
-          <Aperture size={28} weight="duotone" aria-hidden="true" />
-          <span>
-            jev<span className="wordmark-light"> observer</span>
-          </span>
-        </Link>
+        <div className="brand">
+          <Link className="wordmark" href="/" onClick={() => setOpen(false)}>
+            <Aperture size={28} weight="duotone" aria-hidden="true" />
+            <span>
+              jev<span className="wordmark-light"> observer</span>
+            </span>
+          </Link>
+          <span className="beta-badge">Beta</span>
+        </div>
         <nav className="desktop-nav" aria-label="Main navigation">
           <Link href="/#tour">Product</Link>
           <Link
