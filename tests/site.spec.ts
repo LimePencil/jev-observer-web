@@ -77,6 +77,7 @@ test("product tour changes real screenshots with mouse and keyboard", async ({
 
 test("expanded screenshot is a keyboard-dismissible dialog", async ({
   page,
+  isMobile,
 }) => {
   await page.goto("/");
   const expand = page.getByRole("button", {
@@ -86,9 +87,29 @@ test("expanded screenshot is a keyboard-dismissible dialog", async ({
   await expand.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  await expect(
-    dialog.getByRole("img", { name: /^Jev Observer/ }),
-  ).toBeVisible();
+  const image = dialog.getByRole("img", { name: /^Jev Observer/ });
+  await expect(image).toBeVisible();
+  await expect
+    .poll(() =>
+      image.evaluate((element) => (element as HTMLImageElement).naturalWidth),
+    )
+    .toBe(2160);
+  if (isMobile) {
+    const viewport = dialog.locator(".image-dialog-viewport");
+    const overflow = await viewport.evaluate((element) => ({
+      horizontal: element.scrollWidth - element.clientWidth,
+      vertical: element.scrollHeight - element.clientHeight,
+    }));
+    expect(overflow.horizontal).toBeGreaterThan(0);
+    expect(overflow.vertical).toBeGreaterThan(0);
+    await viewport.evaluate((viewport) => {
+      viewport.scrollTop = viewport.scrollHeight;
+      viewport.scrollLeft = viewport.scrollWidth;
+    });
+    await expect(
+      dialog.getByRole("button", { name: "Close screenshot" }),
+    ).toBeInViewport();
+  }
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(expand).toBeFocused();

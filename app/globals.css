@@ -300,7 +300,9 @@ a:hover > .text-link svg {
   padding: 4px 6px;
   color: var(--accent-text);
   background: var(--surface-subtle);
-  font: 600 10px/1 var(--font-geist-mono), monospace;
+  font:
+    600 10px/1 var(--font-geist-mono),
+    monospace;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -484,6 +486,9 @@ a:hover > .text-link svg {
   backdrop-filter: blur(5px);
 }
 .image-dialog-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: 94dvh;
   border: 1px solid var(--line);
   border-radius: 12px;
   overflow: hidden;
@@ -491,6 +496,7 @@ a:hover > .text-link svg {
 }
 .image-dialog-header {
   display: flex;
+  flex: none;
   align-items: center;
   justify-content: space-between;
   color: var(--text);
@@ -501,6 +507,14 @@ a:hover > .text-link svg {
   color: var(--muted);
   margin-left: 14px;
   font-size: 12px;
+}
+.image-dialog-viewport {
+  min-height: 0;
+  overflow: auto;
+}
+.image-dialog-viewport > img {
+  width: 100%;
+  height: auto;
 }
 .approach-section {
   padding-top: 34px;
@@ -1494,17 +1508,9 @@ a:hover > .text-link svg {
     display: block;
     margin-left: 0;
   }
-  .image-dialog-inner > img {
-    min-width: 850px;
+  .image-dialog-viewport > img {
+    width: 1200px;
     max-width: none;
-  }
-  .image-dialog-inner {
-    overflow-x: auto;
-  }
-  .image-dialog-header {
-    position: sticky;
-    left: 0;
-    width: calc(96vw - 2px);
   }
   .approach-section {
     padding-top: 5px;

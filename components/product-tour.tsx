@@ -140,14 +140,16 @@ export function ProductTour() {
               <X size={22} />
             </button>
           </div>
-          <Image
-            src={view.image}
-            width={2160}
-            height={1425}
-            sizes="96vw"
-            quality={95}
-            alt={view.alt}
-          />
+          <div className="image-dialog-viewport">
+            <Image
+              src={view.image}
+              width={2160}
+              height={1425}
+              alt={view.alt}
+              loading="lazy"
+              unoptimized
+            />
+          </div>
         </div>
       </dialog>
     </div>
