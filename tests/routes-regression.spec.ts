@@ -1,5 +1,21 @@
 import { expect, test } from "@playwright/test";
 
+test("pages send security headers", async ({ request }) => {
+  for (const route of ["/", "/docs/installation"]) {
+    const response = await request.get(route);
+    expect(response.ok(), route).toBe(true);
+    const headers = response.headers();
+    expect(headers["content-security-policy"]).toContain(
+      "frame-ancestors 'none'",
+    );
+    expect(headers["content-security-policy"]).toContain("object-src 'none'");
+    expect(headers["x-frame-options"]).toBe("DENY");
+    expect(headers["x-content-type-options"]).toBe("nosniff");
+    expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    expect(headers["permissions-policy"]).toContain("camera=()");
+  }
+});
+
 test("homepage and documentation publish canonical URLs and working share images", async ({
   page,
   request,
