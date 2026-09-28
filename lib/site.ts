@@ -13,9 +13,3 @@ export function siteUrl() {
     return new URL(`https://${process.env.VERCEL_URL}`);
   return new URL("http://localhost:3000");
 }
-export const installCommand = `git clone https://github.com/LimePencil/jev-observer.git
-cd jev-observer
-npm ci --prefix ui
-npm run build --prefix ui
-cargo build --release --locked
-./target/release/jev-observer --demo`;

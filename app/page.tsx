@@ -15,9 +15,8 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { Reveal } from "@/components/reveal";
 import { ProductTour } from "@/components/product-tour";
-import { CodeBlock } from "@/components/code-block";
 import { HeroFlow } from "@/components/hero-flow";
-import { installCommand, site } from "@/lib/site";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -154,47 +153,6 @@ export default function Home() {
             <Link href="/docs/data-and-privacy" className="text-link">
               Data & privacy <ArrowUpRight size={17} />
             </Link>
-          </Reveal>
-        </div>
-      </section>
-      <section
-        className="section install-section"
-        id="install"
-        aria-labelledby="install-title"
-      >
-        <div className="container install-grid">
-          <Reveal className="install-copy">
-            <p className="eyebrow">From source to first look</p>
-            <h2 id="install-title">
-              Make yourself
-              <br />
-              at home.
-            </h2>
-            <p>
-              <strong>720 synthetic requests.</strong> No API key needed.
-            </p>
-            <div className="requirements">
-              <span>Before you begin</span>
-              <p>
-                Git, stable Rust, a C compiler,
-                <br />
-                and Node.js 22.12+ with npm.
-              </p>
-              <p>Source build requires repository access.</p>
-            </div>
-            <Link href="/docs/installation" className="text-link">
-              Install Observer <ArrowUpRight size={17} />
-            </Link>
-          </Reveal>
-          <Reveal className="install-code" delay={0.1}>
-            <CodeBlock code={installCommand} title="Build & run the sample" />
-            <p className="install-footnote">
-              Then open{" "}
-              <a href="http://127.0.0.1:8765" target="_blank" rel="noreferrer">
-                127.0.0.1:8765 <ArrowUpRight size={13} />
-              </a>
-              . Sample mode is isolated and disables upstream forwarding.
-            </p>
           </Reveal>
         </div>
       </section>

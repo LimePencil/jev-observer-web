@@ -603,42 +603,6 @@ a:hover > .text-link svg {
   font-family: var(--font-geist-mono), monospace;
   font-weight: 450;
 }
-.install-section {
-  border-block: 1px solid var(--line);
-  background: var(--surface-subtle);
-}
-.install-grid {
-  display: grid;
-  grid-template-columns: 0.85fr 1.25fr;
-  gap: 78px;
-  align-items: center;
-}
-.install-copy,
-.install-code {
-  min-width: 0;
-}
-.install-copy h2 {
-  margin-top: 22px;
-  font-size: clamp(40px, 4.7vw, 58px);
-}
-.install-copy > p:not(.eyebrow) {
-  color: var(--muted);
-  margin-top: 22px;
-  max-width: 310px;
-  font-size: 16px;
-}
-.requirements {
-  margin-block: 24px;
-}
-.requirements > span {
-  font-size: 12px;
-  font-weight: 600;
-}
-.requirements p {
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 13px;
-}
 .code-block {
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -685,27 +649,6 @@ a:hover > .text-link svg {
 }
 .code-block code {
   font-family: inherit;
-}
-.install-code .code-block {
-  background: var(--surface);
-  margin: 0;
-}
-.install-code .code-block pre {
-  padding-block: 28px;
-}
-.install-footnote {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.8;
-  margin-top: 18px;
-}
-.install-footnote a {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  color: var(--accent-text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 .docs-links {
   display: grid;
@@ -1387,9 +1330,6 @@ a:hover > .text-link svg {
   .flow-node strong {
     font-size: 11px;
   }
-  .install-grid {
-    gap: 40px;
-  }
   .docs-layout {
     grid-template-columns: 195px minmax(0, 1fr);
     gap: 35px;
@@ -1595,16 +1535,6 @@ a:hover > .text-link svg {
   }
   .privacy-facts {
     max-width: 370px;
-  }
-  .install-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 28px;
-  }
-  .install-copy h2 {
-    font-size: 44px;
-  }
-  .install-copy > p:not(.eyebrow) {
-    max-width: 400px;
   }
   .code-block pre {
     font-size: 10px;
