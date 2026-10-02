@@ -56,7 +56,7 @@ export default function Home() {
             <Desktop size={20} /> Runs on your machine
           </span>
           <span>
-            <HardDrives size={20} /> One executable after build
+            <HardDrives size={20} /> Native installers
           </span>
           <span>
             <GitBranch size={20} /> MIT licensed
@@ -78,9 +78,7 @@ export default function Home() {
             </h2>
           </div>
         </Reveal>
-        <Reveal delay={0.12}>
-          <ProductTour />
-        </Reveal>
+        <ProductTour />
       </section>
       <section
         className="section approach-section container"
@@ -97,7 +95,7 @@ export default function Home() {
           <Reveal className="flow-panel">
             <div
               className="flow-diagram"
-              aria-label="Your application sends requests through local Jev Observer to your configured provider. Observer stores captured history in local SQLite."
+              aria-label="Your application sends requests through local Jev Observer to your configured provider. Observer encrypts live history in local SQLite."
             >
               <div className="flow-node">
                 <Code size={25} />
@@ -121,7 +119,7 @@ export default function Home() {
             </div>
             <div className="flow-note">
               <Database size={16} />
-              <span>History in local SQLite.</span>
+              <span>Live history in encrypted SQLite.</span>
             </div>
             <div className="panel-copy">
               <h3>Connect once. See more.</h3>
@@ -147,7 +145,7 @@ export default function Home() {
                 Observer account <strong>Not needed</strong>
               </span>
               <span>
-                History format <strong>SQLite</strong>
+                Live history <strong>Encrypted SQLite</strong>
               </span>
             </div>
             <Link href="/docs/data-and-privacy" className="text-link">

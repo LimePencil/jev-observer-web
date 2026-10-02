@@ -7,20 +7,38 @@ order: 3
 
 Live collection needs a saved database key and local authentication. Install Observer using the [installation guide](/docs/installation) before connecting an application. For a source build, replace `jev-observer` below with `./target/release/jev-observer`.
 
+If the sample is still running, stop it with `Ctrl-C` before starting live Observer on the same port.
+
+## Know which key to use
+
+| Credential             | Where you use it                                  | Where it comes from                                  |
+| ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
+| Database key           | `JEV_OBSERVER_DB_KEY` when starting live Observer | Generate once below and save for this database       |
+| Dashboard access token | Browser password for username `observer`          | The `*.access-token` file whose path Observer prints |
+| Provider API key       | **Connect an application** in the live dashboard  | Your TypeSafe provider account                       |
+| Local client token     | Your application's SDK `api_key` or `apiKey`      | Shown once after registering the provider key        |
+
+Demo needs only its dashboard access token. For live collection, keep the database key available across restarts and copy the local client token before leaving the connection panel.
+
 ## Save a database key
 
 Generate a 32-byte key once and save its printed 64-character hexadecimal value in a password manager. Losing this key makes encrypted history unreadable. Supply the same key on every live startup.
 
-In Bash, generate the key, save it, then read the saved value without putting it in a command-line argument or shell history:
+In Bash, generate the key once:
 
 ```bash
 openssl rand -hex 32
+```
+
+Save the printed value before continuing. On this and every later startup, read that saved value without putting it in a command-line argument or shell history:
+
+```bash
 read -r -s -p 'Saved database key: ' JEV_OBSERVER_DB_KEY; echo
 export JEV_OBSERVER_DB_KEY
 jev-observer
 ```
 
-In Windows PowerShell:
+In Windows PowerShell, generate the key once:
 
 ```powershell
 $keyBytes = New-Object byte[] 32
@@ -28,6 +46,11 @@ $random = [Security.Cryptography.RandomNumberGenerator]::Create()
 $random.GetBytes($keyBytes)
 $random.Dispose()
 [BitConverter]::ToString($keyBytes).Replace('-', '').ToLowerInvariant()
+```
+
+Save the printed value, then use this block on each live startup:
+
+```powershell
 $savedKey = Read-Host 'Saved database key' -AsSecureString
 $env:JEV_OBSERVER_DB_KEY = [Net.NetworkCredential]::new('', $savedKey).Password
 & "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe"
@@ -37,7 +60,7 @@ On later starts, read the saved key again; do not generate a replacement for an 
 
 ## Sign in and register a provider key
 
-Open [http://127.0.0.1:8765](http://127.0.0.1:8765). Sign in with username `observer` and the token in `.jev-observer/observer.access-token`. Observer prints the exact token-file path at startup, including when using `--db`.
+Open [http://127.0.0.1:8765](http://127.0.0.1:8765). Sign in with username `observer` and the token in `.jev-observer/observer.access-token`. Live mode uses a different dashboard token from demo mode. Observer prints the exact token-file path at startup, including when using `--db`.
 
 Run Observer from your application's directory, or choose a stable history location:
 

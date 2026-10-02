@@ -30,6 +30,17 @@ export default defineConfig({
       name: "mobile",
       use: { ...devices["iPhone 13"], defaultBrowserType: "chromium" },
     },
+    {
+      name: "firefox",
+      use: {
+        ...devices["Desktop Firefox"],
+        viewport: { width: 1440, height: 1000 },
+      },
+    },
+    {
+      name: "mobile-webkit",
+      use: { ...devices["iPhone 13"] },
+    },
   ],
   webServer: remoteBaseURL
     ? undefined

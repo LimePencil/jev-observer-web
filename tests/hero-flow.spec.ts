@@ -52,6 +52,19 @@ test("hero questions reveal their sample answers with mouse and keyboard", async
   ).toBeFocused();
   await expect(figure.getByText("1.7 / 2", { exact: true })).toBeVisible();
   await page.keyboard.press("ArrowRight");
+  // Native WebKit radio groups stop at the last option instead of wrapping.
+  // Both behaviors must keep the selection usable in either direction.
+  if (!(await routing.isChecked())) {
+    await expect(
+      figure.getByRole("radio", { name: "Frustration" }),
+    ).toBeFocused();
+    await expect(
+      figure.getByRole("radio", { name: "Frustration" }),
+    ).toBeChecked();
+    await page.keyboard.press("ArrowLeft");
+    await expect(figure.getByRole("radio", { name: "Urgency" })).toBeChecked();
+    await page.keyboard.press("ArrowLeft");
+  }
   await expect(routing).toBeFocused();
   await expect(routing).toBeChecked();
   await expect(figure.getByText("Technical", { exact: true })).toBeVisible();
@@ -64,7 +77,8 @@ test("request reveal finishes and replays when choosing a question", async ({
   await page.goto("/");
   const figure = heroFlow(page);
   await figure.scrollIntoViewIfNeeded();
-  await expect.poll(() => runningParticles(figure), { timeout: 3000 }).toBe(0);
+  // Use the suite timeout so animation completion polling tolerates busy browsers.
+  await expect.poll(() => runningParticles(figure)).toBe(0);
 
   await figure.getByText("Urgency", { exact: true }).click();
   await expect
@@ -79,7 +93,7 @@ test("request reveal finishes and replays when choosing a question", async ({
   expect(animationEndTimes.every((endTime) => Number.isFinite(endTime))).toBe(
     true,
   );
-  await expect.poll(() => runningParticles(figure), { timeout: 3000 }).toBe(0);
+  await expect.poll(() => runningParticles(figure)).toBe(0);
   await expect(figure.getByRole("radio", { name: "Urgency" })).toBeChecked();
   await expect(figure.getByText("88%", { exact: true })).toBeVisible();
 });

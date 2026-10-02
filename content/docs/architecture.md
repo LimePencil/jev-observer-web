@@ -87,7 +87,7 @@ curl --user observer -X POST \
   --data '{"key":"department","label":"correct"}'
 ```
 
-Accepted labels are `correct`, `incorrect` and `unknown`. Import bodies use `{"text":"...","format":"observer-jsonl"}` or the `jevrouter-receipt` format. Imports require JSON content type and obey the upload and record limits.
+Accepted labels are `correct`, `incorrect` and `unknown`. Import bodies use `{"text":"...","format":"observer-jsonl"}` or the `jevrouter-receipt` format. Imports require JSON content type and allow at most 10,000 records and 8 MiB of decoded UTF-8 `text`. The encoded HTTP body has a separate limit of 48 MiB plus 1 KiB to accommodate JSON escaping; uploads time out after 30 seconds. Only one import runs at a time.
 
 ```bash
 curl --user observer --get http://127.0.0.1:8765/api/export \

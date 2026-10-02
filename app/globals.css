@@ -57,6 +57,10 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
+  scrollbar-gutter: stable;
+}
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 body {
   margin: 0;
@@ -511,6 +515,7 @@ a:hover > .text-link svg {
 .image-dialog-viewport {
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 .image-dialog-viewport > img {
   width: 100%;
@@ -642,14 +647,24 @@ a:hover > .text-link svg {
 }
 .code-heading {
   padding: 10px 14px 10px 20px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 10px 16px;
   border-bottom: 1px solid var(--line);
   font-family: var(--font-geist-mono), monospace;
   font-size: 11px;
   color: var(--muted);
+}
+.copy-status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.copy-status:empty {
+  display: none;
 }
 .copy-button {
   background: var(--surface);
@@ -873,6 +888,9 @@ a:hover > .text-link svg {
 .doc-article {
   min-width: 0;
 }
+.doc-mobile-toc {
+  display: none;
+}
 .doc-toc {
   position: sticky;
   top: 119px;
@@ -985,7 +1003,7 @@ a:hover > .text-link svg {
   margin-block: 22px;
 }
 .prose .code-block pre {
-  font-size: 11px;
+  font-size: 12px;
   padding: 19px;
   line-height: 1.9;
 }
@@ -1172,9 +1190,21 @@ a:hover > .text-link svg {
   border-radius: 15px;
   padding: 0;
   margin: 12dvh auto auto;
+  overflow: hidden;
+}
+.search-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.search-dialog-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: inherit;
 }
 .search-input-row {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 13px;
   padding: 16px 20px;
@@ -1199,9 +1229,12 @@ a:hover > .text-link svg {
   outline-offset: 5px;
 }
 .search-results {
+  flex: 1;
+  min-height: 0;
   padding: 14px;
   max-height: 54dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .search-hint {
   color: var(--muted);
@@ -1216,7 +1249,8 @@ a:hover > .text-link svg {
   padding: 14px 12px;
   border-radius: 8px;
 }
-.search-result:hover {
+.search-result:hover,
+.search-result:focus-visible {
   background: var(--accent-soft);
 }
 .search-result span {
@@ -1238,6 +1272,7 @@ a:hover > .text-link svg {
 }
 .search-footer {
   display: flex;
+  flex-shrink: 0;
   gap: 20px;
   justify-content: space-between;
   border-top: 1px solid var(--line);
@@ -1281,6 +1316,7 @@ a:hover > .text-link svg {
   .reveal-ready:focus-within {
     opacity: 1;
     transform: none;
+    animation: none;
   }
   .reveal-visible {
     opacity: 1;
@@ -1366,6 +1402,45 @@ a:hover > .text-link svg {
   }
   .doc-toc {
     display: none;
+  }
+  .doc-mobile-toc {
+    display: block;
+    margin-bottom: 28px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .doc-mobile-toc > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    list-style: none;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .doc-mobile-toc > summary::-webkit-details-marker {
+    display: none;
+  }
+  .doc-mobile-toc[open] > summary {
+    border-bottom: 1px solid var(--line);
+  }
+  .doc-mobile-toc[open] > summary svg {
+    transform: rotate(180deg);
+  }
+  .doc-mobile-toc nav {
+    display: grid;
+    padding: 8px;
+  }
+  .doc-mobile-toc nav a {
+    padding: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-radius: 4px;
+    color: var(--accent-text);
+  }
+  .doc-mobile-toc nav a:hover {
+    background: var(--accent-soft);
   }
   .docs-index {
     grid-column: 2;
@@ -1712,7 +1787,7 @@ a:hover > .text-link svg {
   }
   .prose .code-block pre {
     padding: 16px;
-    font-size: 10px;
+    font-size: 12px;
   }
   .prose th,
   .prose td {
@@ -1722,11 +1797,12 @@ a:hover > .text-link svg {
     gap: 10px;
     padding: 12px;
   }
-  .search-input-row input {
-    font-size: 14px;
-  }
   .search-footer > span:first-child {
     max-width: 200px;
+  }
+  .search-footer {
+    flex-direction: column;
+    gap: 7px;
   }
 }
 @media (max-width: 360px) {

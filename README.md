@@ -28,11 +28,13 @@ Production is hosted at [jev-observer-web.vercel.app](https://jev-observer-web.v
 npm run lint
 npm run build
 npm run typecheck
-npx playwright install chromium
+npx playwright install --with-deps chromium firefox webkit
 npm test
 ```
 
-Playwright starts the production server. It checks desktop/mobile navigation, the product-tour tabs and screenshot dialog, documentation search, all doc routes and internal anchors, clipboard behavior, persistent light/dark themes, reduced motion, and WCAG accessibility using axe. CI repeats these checks on pushes and pull requests.
+Playwright starts the production server. It runs Chromium desktop/mobile, Firefox desktop and mobile WebKit checks for navigation and browser history, guide section links, product-tour tabs and keyboard-pannable screenshots, search and short-screen dialogs, doc routes and internal anchors, 404 recovery, clipboard success and recovery, persisted themes, reduced motion, and WCAG accessibility using axe. Native clipboard permission checks run only in Chromium; all engines verify rejected/unavailable clipboard recovery and retry. CI repeats these checks on pushes and pull requests.
+
+Wheel-scroll regressions use desktop pointer input at narrow widths because mobile WebKit emulation does not support wheel events. Other mobile checks retain device emulation; these runs do not replace testing on physical iOS devices.
 
 To run the browser checks against a deployment without starting a local server:
 
@@ -54,6 +56,8 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 The website repository is private; the application source and releases are public. Version 0.1.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
 The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
+
+The latest alignment review on October 2, 2026 checked fetched application `main` at [`d3e4886`](https://github.com/LimePencil/jev-observer/commit/d3e4886955990087bda970f645756ae5b5d9ee3b) and the published [v0.1.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.1.0). The release includes all six native packages. Import limits apply to decoded UTF-8 text (8 MiB and 10,000 records), with JSON transport overhead allowed separately. Dashboard documentation should preserve the difference between pausing visible updates and continuing collection.
 
 ## Scope
 

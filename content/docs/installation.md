@@ -49,13 +49,15 @@ Open [http://127.0.0.1:8765](http://127.0.0.1:8765), then sign in with:
 - **Username:** `observer`
 - **Password:** the token in `.jev-observer/observer.demo.access-token`
 
-Observer prints the exact token-file path at startup, including with a custom database path. The sample contains 720 synthetic requests with Choice, Score and Noul questions, changed definitions and failures. It needs no provider credentials or database key and disables upstream forwarding.
+Observer prints the exact token-file path at startup, including with a custom database path. Leave Observer running and open that file in another terminal or your text editor to copy its value into the browser password prompt. The token is the dashboard password; a provider API key is not needed for the sample.
 
-Demo uses a separate plaintext `*.demo.sqlite` database. An existing nonempty sample history is kept across restarts rather than reseeded. The dashboard, fonts and charts work offline. Press `Ctrl-C` to stop Observer.
+The sample contains 720 synthetic requests with Choice, Score and Noul questions, changed definitions and failures. It needs no provider credentials or database key and disables upstream forwarding. After signing in, select **Question groups**, open a group to compare definitions, then inspect a request and its typed answers. Follow [the dashboard guide](/docs/dashboard) for filters, labels and collection health.
+
+Demo uses a separate plaintext `*.demo.sqlite` database, including for any records you import while in demo mode. Use [live mode](/docs/connecting) for encrypted imported history. Existing nonempty history is kept across restarts rather than reseeded. The dashboard, fonts and charts work offline. Press `Ctrl-C` to stop Observer.
 
 ## Start normal collection
 
-Live history requires a saved 32-byte database key. [Generate and save that key](/docs/connecting#save-a-database-key), supply it as `JEV_OBSERVER_DB_KEY` on every live startup, then start without `--demo`:
+Stop the sample with `Ctrl-C` first. Live history requires a saved 32-byte database key. [Generate and save that key](/docs/connecting#save-a-database-key), supply it as `JEV_OBSERVER_DB_KEY` on every live startup, then start without `--demo`:
 
 ```bash
 jev-observer

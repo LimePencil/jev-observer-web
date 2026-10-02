@@ -84,7 +84,8 @@ test("expanded screenshot is a keyboard-dismissible dialog", async ({
     name: "Expand screenshot",
     exact: true,
   });
-  await expand.click();
+  // A deliberate press must keep its target while the page reveals content.
+  await expand.click({ delay: 300 });
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   const image = dialog.getByRole("img", { name: /^Jev Observer/ });
@@ -113,6 +114,33 @@ test("expanded screenshot is a keyboard-dismissible dialog", async ({
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(expand).toBeFocused();
+});
+
+test("keyboard focus immediately reveals controls below the fold", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const panel = page.locator(".flow-panel");
+  await expect(panel).toHaveClass(/reveal-ready/);
+  const connect = page.getByRole("link", {
+    name: "Connect your application",
+    exact: true,
+  });
+  await connect.focus();
+  await expect(panel).toHaveClass(/reveal-visible/);
+  await expect(connect).toBeFocused();
+  const appearance = await panel.evaluate((element) => ({
+    opacity: getComputedStyle(element).opacity,
+    transform: getComputedStyle(element).transform,
+    moving: element
+      .getAnimations()
+      .some((animation) => animation.playState === "running"),
+  }));
+  expect(appearance).toEqual({
+    opacity: "1",
+    transform: "none",
+    moving: false,
+  });
 });
 
 test("documentation search finds installation and navigates to it", async ({
@@ -246,7 +274,12 @@ test("mobile navigation opens, closes with Escape, and follows links", async ({
 test("installation command copies actual code and announces success", async ({
   page,
   context,
+  browserName,
 }) => {
+  test.skip(
+    browserName !== "chromium",
+    "Clipboard read/write permissions are Chromium-only; other engines test recovery and retry with local mocks.",
+  );
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/docs/installation");
   const copy = page

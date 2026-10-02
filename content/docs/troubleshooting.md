@@ -5,7 +5,7 @@ section: "User guide"
 order: 7
 ---
 
-Start with the process output and the dashboard's collection-health signal. A successful upstream response and a complete saved observation are separate facts.
+Start with the process output and the dashboard's collection-health signal. A successful upstream response and a complete saved observation are separate facts. Commands below use the installed executable unless they explicitly rebuild from source; Windows users can use the executable path from [installation](/docs/installation).
 
 ## The dashboard build is missing
 
@@ -30,7 +30,7 @@ curl --user observer http://127.0.0.1:8765/api/health
 Curl prompts for the workspace access token as the password. Use the token file whose exact path Observer prints at startup; demo and live history have separate tokens. If another process occupies the port, select a different one and update both the browser address and SDK base URL:
 
 ```bash
-./target/release/jev-observer --port 8770
+jev-observer --port 8770
 ```
 
 Observer binds to IPv4 loopback. A remote application or a separate machine cannot use your computer's `127.0.0.1` address to reach it.
@@ -93,7 +93,7 @@ See [measured performance and limits](https://github.com/LimePencil/jev-observer
 
 ## An import fails
 
-Choose the format that matches the file, then check valid JSON/JSONL structure. Imports support Observer exports and the reviewed JevRouter receipt format. Limit each batch to 10,000 records and an 8 MiB upload, including the JSON wrapper.
+Choose the format that matches the file, then check valid JSON/JSONL structure. Imports support Observer exports and the reviewed JevRouter receipt format. Limit each batch to 10,000 records and 8 MiB of UTF-8 file or pasted text. The API permits JSON wrapper and escaping overhead separately.
 
 Only one import runs at a time. A duplicate count can mean records with the same explicit source event IDs were already imported. See [import records](/docs/data-and-privacy#import-records).
 

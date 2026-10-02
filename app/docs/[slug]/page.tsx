@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  CaretDown,
 } from "@phosphor-icons/react/dist/ssr";
 import { getDoc, getDocs, getHeadings } from "@/lib/docs";
 import { Markdown } from "@/components/markdown";
@@ -61,6 +62,20 @@ export default async function DocPage({
         </div>
         <h1>{doc.title}</h1>
         <p className="doc-lead">{doc.description}</p>
+        {headings.length > 0 && (
+          <details className="doc-mobile-toc">
+            <summary>
+              On this page <CaretDown size={16} aria-hidden="true" />
+            </summary>
+            <nav aria-label="On this page">
+              {headings.map((heading) => (
+                <a key={heading.id} href={`#${heading.id}`}>
+                  {heading.title}
+                </a>
+              ))}
+            </nav>
+          </details>
+        )}
         <Markdown content={doc.content} />
         <div className="doc-source">
           <a href={site.repo} target="_blank" rel="noreferrer">

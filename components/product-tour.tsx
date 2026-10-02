@@ -8,12 +8,15 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
+import overviewImage from "@/public/images/observer-metrics.png";
+import questionsImage from "@/public/images/observer-questions.png";
+import requestImage from "@/public/images/observer-live.png";
 const views = [
   {
     id: "overview",
     title: "Overview",
     icon: ChartLine,
-    image: "/images/observer-metrics.png",
+    image: overviewImage,
     description: "Latency, usage, and failures. One shared history.",
     alt: "Jev Observer overview showing synthetic sample requests, latency metrics, question groups, and recent requests.",
   },
@@ -21,7 +24,7 @@ const views = [
     id: "questions",
     title: "Question groups",
     icon: Stack,
-    image: "/images/observer-questions.png",
+    image: questionsImage,
     description:
       "Follow recurring questions without mixing different definitions.",
     alt: "Jev Observer question group detail showing the support_routing question, answer distribution, and definition versions in sample data.",
@@ -30,7 +33,7 @@ const views = [
     id: "requests",
     title: "Request details",
     icon: ListMagnifyingGlass,
-    image: "/images/observer-live.png",
+    image: requestImage,
     description:
       "Inspect typed answers, probabilities, and the request behind them.",
     alt: "Jev Observer request detail showing a synthetic request, typed answers, and outcome probabilities.",
@@ -83,7 +86,10 @@ export function ProductTour() {
         <button
           className="icon-button expand-button"
           type="button"
-          onClick={() => dialog.current?.showModal()}
+          onClick={(event) => {
+            event.currentTarget.focus();
+            dialog.current?.showModal();
+          }}
           aria-label="Expand screenshot"
           title="Expand screenshot"
         >
@@ -140,7 +146,12 @@ export function ProductTour() {
               <X size={22} />
             </button>
           </div>
-          <div className="image-dialog-viewport">
+          <div
+            className="image-dialog-viewport"
+            tabIndex={0}
+            role="region"
+            aria-label="Screenshot details"
+          >
             <Image
               src={view.image}
               width={2160}

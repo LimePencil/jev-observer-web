@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Page not found",
+  description:
+    "This page could not be found. Continue with the Jev Observer documentation or return to the homepage.",
+};
+
 export default function NotFound() {
   return (
     <main id="main" className="container not-found">

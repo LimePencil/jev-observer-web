@@ -5,10 +5,10 @@ section: "User guide"
 order: 6
 ---
 
-Observer is configured through startup flags. The dashboard's Settings view shows the active configuration; it does not replace the command line.
+Observer is configured through startup flags. The dashboard's Settings view shows the active configuration; it does not replace the command line. Commands below use the installed executable; for a source build, replace `jev-observer` with `./target/release/jev-observer`. On Windows, use the executable path from [installation](/docs/installation).
 
 ```bash
-./target/release/jev-observer --help
+jev-observer --help
 ```
 
 ## Listener and history
@@ -68,7 +68,7 @@ Full bodies can forward while their saved observations are truncated. If the cap
 Provide both an input and output rate in USD per million tokens. Use rates appropriate for your own provider and model arrangement.
 
 ```bash
-./target/release/jev-observer \
+jev-observer \
   --input-price-per-million 1.00 \
   --output-price-per-million 2.00
 ```

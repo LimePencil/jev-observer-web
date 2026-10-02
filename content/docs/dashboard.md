@@ -11,9 +11,9 @@ The dashboard brings three views together: recurring questions, individual reque
 
 Filter by source, model and time window. Available windows are the last hour, last 24 hours, last seven days and all retained history. The default is 24 hours.
 
-The request search matches source names, request IDs and question keys. Use the separate question-list search to find a displayed group. Select the failures filter when investigating unsuccessful requests.
+The request search matches source names, request IDs and question keys. Press `Ctrl-K` (`⌘K` on macOS) to focus it when no details panel is open. Use the separate question-list search to find a displayed group. Select the failures filter when investigating unsuccessful requests.
 
-The request feed shows a bounded list of recent records, while the summary and activity chart cover the selected history window. The interface shows list limits. A shorter visible list does not mean the summary contains only those requests.
+The request feed initially shows the latest 12 records; **Show latest** expands it to at most 100. The summary and activity chart cover the full selected history window. The question list is also limited to 100 groups, so its search only searches those listed groups. Use the shared request search or source filter to narrow the full history when a question is missing from the list.
 
 ## Read the summary
 
@@ -49,7 +49,7 @@ For an individual answer, add a local review label: `correct`, `incorrect` or `u
 
 Select the live-updates control to hold the visible dashboard. Opening a details panel also holds the visible snapshot. Collection continues in both cases.
 
-When newer records are available, resume the live view to display the latest snapshot. The health view uses independent polling, so recording problems can still be reported while you inspect a paused snapshot. Browser polling pauses in hidden tabs.
+When newer records are available, select **Resume live** or **Show latest** to display the latest snapshot. Changing filters loads the newly selected history even while paused. Importing or deleting history refreshes the view once and keeps its paused state. The health view uses independent polling, so recording problems can still be reported while you inspect a paused snapshot. Browser polling pauses in hidden tabs.
 
 ## Follow collection health
 
