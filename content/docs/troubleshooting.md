@@ -24,10 +24,10 @@ Restart using `./target/release/jev-observer`. A development server is not requi
 Confirm that the Observer process is still running and inspect its terminal output. Use `http://127.0.0.1:8765`, or the port you supplied with `--port`.
 
 ```bash
-curl http://127.0.0.1:8765/api/health
+curl --user observer http://127.0.0.1:8765/api/health
 ```
 
-If another process occupies the port, select a different one and update both the browser address and SDK base URL:
+Curl prompts for the workspace access token as the password. Use the token file whose exact path Observer prints at startup; demo and live history have separate tokens. If another process occupies the port, select a different one and update both the browser address and SDK base URL:
 
 ```bash
 ./target/release/jev-observer --port 8770
@@ -35,17 +35,25 @@ If another process occupies the port, select a different one and update both the
 
 Observer binds to IPv4 loopback. A remote application or a separate machine cannot use your computer's `127.0.0.1` address to reach it.
 
+## Live startup reports a database key error
+
+Supply `JEV_OBSERVER_DB_KEY` as the saved 64-character hexadecimal key for this database. A missing or wrong key prevents live startup. Do not generate a new key for existing encrypted history. See [database-key setup](/docs/connecting#save-a-database-key). Demo needs no database key. Stop older Observer processes before migrating a plaintext database.
+
+## The dashboard or API asks for a password
+
+Use username `observer` and the workspace access token, not your provider key or database key. The default token paths are `.jev-observer/observer.access-token` for live mode and `.jev-observer/observer.demo.access-token` for demo. Startup output gives the exact path for custom databases. Direct API calls require HTTP Basic authentication too; `curl --user observer` prompts for the token.
+
 ## The application cannot make a request
 
 Check these in order:
 
-1. Start normal mode, without `--demo`. Demo intentionally disables forwarding.
+1. Supply the saved database key and start normal mode, without `--demo`. Demo intentionally disables forwarding.
 2. Set the SDK base URL to the origin only. The tested SDKs append `/v1/systemone` themselves.
-3. Keep the provider credential in your application environment.
+3. Use the local client token from **Connect an application**, or a direct provider key together with `x-observer-access` containing the workspace dashboard token.
 4. Verify the configured upstream endpoint and its availability.
 5. Confirm that your client uses the supported native System One route.
 
-Observer adds no retries or redirects. Your SDK's error handling may expose an upstream error response. Other endpoints and untested provider dialects are outside the native forwarding scope. See the exact [SDK connection examples](/docs/connecting).
+If the system credential store is locked or unavailable, register the provider key with session-only storage. Remote upstreams require HTTPS. Observer adds no retries or redirects. Your SDK's error handling may expose an upstream error response. Other endpoints and untested provider dialects are outside the native forwarding scope. See the exact [SDK connection examples](/docs/connecting).
 
 ## Calls succeed but captures are incomplete
 
@@ -79,7 +87,7 @@ If rules are carried in input state, add a meaningful `x-observer-task-version`.
 
 Whole-window summaries get more expensive as retained history grows. Narrow the source or time window and inspect the database's size and host load. A refresh waits for the current snapshot before scheduling the next one.
 
-Pausing the visible dashboard or opening details intentionally holds the view while collection continues. The local performance report records multi-second dashboard queries at around 150,000 records on its test machine; it does not promise one-second freshness at every history size.
+Pausing the visible dashboard or opening details intentionally holds the view while collection continues. Historical performance measurements predate encrypted live history and are not current capacity claims; they do not promise one-second freshness at every history size.
 
 See [measured performance and limits](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md).
 
@@ -92,5 +100,7 @@ Only one import runs at a time. A duplicate count can mean records with the same
 ## A local API call returns 403
 
 Use the loopback URL with the configured port. Browser origins must match the local listener. Local API mutations additionally require `X-Observer-Request: 1`; the dashboard includes it automatically.
+
+API calls also require HTTP Basic authentication as described above. A proxy call using a provider key directly or the process fallback needs the workspace token in `x-observer-access`; fallback additionally requires `application/json`. Registered local client tokens need no additional access header.
 
 For custom integrations, see [the local API](/docs/architecture#local-api). The frontend development server already has a narrowly scoped API proxy configured for local development.

@@ -9,7 +9,7 @@ Jev Observer is an independent MIT-licensed project. Contributions can improve t
 
 Start with the [source repository](https://github.com/LimePencil/jev-observer), [development setup](/docs/development) and [architecture](/docs/architecture). The historical research and planning reports contain proposals as well as implemented ideas. Use current source and the README to establish existing behavior.
 
-> The source repository is currently private. Opening issues, reading source links, and submitting changes require repository access.
+The application source, license and issue tracker are public. Open issues and propose changes in [LimePencil/jev-observer](https://github.com/LimePencil/jev-observer).
 
 ## Report a reproducible problem
 
@@ -49,6 +49,7 @@ npm run build --prefix ui
 cargo fmt --all --check
 cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
+python3 scripts/test-install.py
 npx --prefix ui playwright install chromium
 npm test --prefix ui
 cargo build --release --locked

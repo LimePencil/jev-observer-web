@@ -30,7 +30,7 @@ export function Footer() {
           target="_blank"
           rel="noreferrer"
         >
-          MIT license (repository access required) <ArrowUpRight size={13} />
+          MIT license <ArrowUpRight size={13} />
         </a>
       </div>
     </footer>

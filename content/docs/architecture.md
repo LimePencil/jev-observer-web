@@ -19,26 +19,28 @@ Application -> Local HTTP proxy -> Configured upstream
 
 ## Module map
 
-| Location           | Responsibility                                                          |
-| ------------------ | ----------------------------------------------------------------------- |
-| `src/main.rs`      | Parse configuration, initialize storage, seed demo, start services      |
-| `src/config.rs`    | CLI defaults, limits, upstream validation and public settings           |
-| `src/server.rs`    | Proxy, local API, embedded UI, origin guards and shutdown               |
-| `src/collector.rs` | Capture reservations, bounded queue, writer and health counters         |
-| `src/model.rs`     | Normalization, deterministic grouping, privacy, sample data and imports |
-| `src/store.rs`     | SQLite schema, batched writes, queries, export, labels and deletion     |
-| `build.rs`         | Copy built frontend assets for executable embedding                     |
-| `ui/`              | React, TypeScript and Vite dashboard with bundled assets                |
+| Location             | Responsibility                                                              |
+| -------------------- | --------------------------------------------------------------------------- |
+| `src/main.rs`        | Parse configuration, initialize storage, seed demo, start services          |
+| `src/config.rs`      | CLI defaults, limits, upstream validation and public settings               |
+| `src/access.rs`      | Workspace dashboard tokens and HTTP Basic authentication                    |
+| `src/credentials.rs` | Registered provider keys, local client tokens and system credential storage |
+| `src/server.rs`      | Proxy, local API, embedded UI, origin guards and shutdown                   |
+| `src/collector.rs`   | Capture reservations, bounded queue, writer and health counters             |
+| `src/model.rs`       | Normalization, deterministic grouping, privacy, sample data and imports     |
+| `src/store.rs`       | SQLite schema, batched writes, queries, export, labels and deletion         |
+| `build.rs`           | Copy built frontend assets for executable embedding                         |
+| `ui/`                | React, TypeScript and Vite dashboard with bundled assets                    |
 
 ## Forwarding and capture
 
-The proxy handles native `POST /v1/systemone` at one configured upstream URL. Caller authorization takes precedence over the optional process fallback. Observer strips hop-by-hop and local `x-observer-*` metadata headers before forwarding.
+The proxy handles native `POST /v1/systemone` at one configured upstream URL. Registered local client tokens are validated and replaced with their provider key. Direct provider-key and optional process-fallback requests require the workspace token in `X-Observer-Access`; fallback also requires `application/json`. Caller authorization takes precedence over the fallback. Remote upstreams require HTTPS; HTTP is allowed only for loopback mocks. Observer strips hop-by-hop headers, local `x-observer-*` metadata, cookies and browser origin/referrer headers before forwarding, and discards provider `Set-Cookie` headers.
 
 The upstream client disables redirects, automatic retries and response decompression. It forwards full bodies while separately retaining bounded copies. An oversized or unsupported compressed body can therefore have a successful forwarded response and an incomplete saved capture.
 
 A semaphore reservation covers both captured bodies and stays held until normalization and persistence finish. A request does not wait for a reservation. Exhausted reservations or a full pending queue drop observation work and update health counters.
 
-One dedicated writer handles normalization and batched persistence outside the async forwarding runtime. SQLite uses WAL. Local HTTP handlers run database work through blocking tasks with bounded concurrency.
+One dedicated writer handles normalization and batched persistence outside the async forwarding runtime. SQLite uses WAL. Live storage uses SQLCipher with an externally supplied `JEV_OBSERVER_DB_KEY`; legacy plaintext databases migrate before the listener starts. Demo history and explicit exports remain plaintext. Local HTTP handlers run database work through blocking tasks with bounded concurrency.
 
 ## Normalized records and grouping
 
@@ -50,13 +52,16 @@ Unknown values remain null. Redacted definitions are isolated. Imported applicat
 
 ## Local API
 
-The API serves the local dashboard and is part of the current prototype. Use the same loopback origin as the browser. All local API mutations require `X-Observer-Request: 1`. Requests with an Origin must pass same-origin validation, and Host validation also applies to reads.
+The API serves the local dashboard and is part of the current prototype. Dashboard assets and API endpoints require HTTP Basic authentication with username `observer` and the workspace access token printed by path at startup. Use the same loopback origin as the browser. All local API mutations also require `X-Observer-Request: 1`. Requests with an Origin must pass same-origin validation, and Host validation applies to reads. Cross-site browser reads identified by Fetch Metadata are rejected.
 
 | Method and path                 | Result                                                         |
 | ------------------------------- | -------------------------------------------------------------- |
 | `GET /api/dashboard`            | Filtered summary, timeline, groups, recent requests and health |
 | `GET /api/health`               | Independent collector and maintenance health                   |
 | `GET /api/settings`             | Public configuration, excluding credentials                    |
+| `GET /api/credentials`          | Registered provider-key status, excluding secrets              |
+| `PUT /api/credentials`          | Register or rotate a key; return a new local client token once |
+| `DELETE /api/credentials`       | Remove a registered key and revoke its token                   |
 | `GET /api/requests/{id}`        | Complete normalized record                                     |
 | `GET /api/groups/{id}`          | Group details, versions, activity and bounded observations     |
 | `POST /api/requests/{id}/label` | Save a review for one answer key                               |
@@ -67,15 +72,15 @@ The API serves the local dashboard and is part of the current prototype. Use the
 The dashboard, group and export queries accept supported filters including `source`, `model`, `window`, `group`, `status` and `search`. Windows are `1h`, `24h`, `7d` and `all`; the default is `24h`. Use `status=error` for failure filtering.
 
 ```bash
-curl --get http://127.0.0.1:8765/api/dashboard \
+curl --user observer --get http://127.0.0.1:8765/api/dashboard \
   --data-urlencode 'window=1h' \
   --data-urlencode 'source=my-application'
 ```
 
-To label an existing answer, replace the request ID and key with values from a saved record:
+Curl prompts for the workspace access token as its password. For demo requests, use the separate demo token. To label an existing answer, replace the request ID and key with values from a saved record:
 
 ```bash
-curl -X POST \
+curl --user observer -X POST \
   http://127.0.0.1:8765/api/requests/REQUEST_ID/label \
   -H 'Content-Type: application/json' \
   -H 'X-Observer-Request: 1' \
@@ -85,7 +90,7 @@ curl -X POST \
 Accepted labels are `correct`, `incorrect` and `unknown`. Import bodies use `{"text":"...","format":"observer-jsonl"}` or the `jevrouter-receipt` format. Imports require JSON content type and obey the upload and record limits.
 
 ```bash
-curl --get http://127.0.0.1:8765/api/export \
+curl --user observer --get http://127.0.0.1:8765/api/export \
   --data-urlencode 'format=jsonl' \
   --data-urlencode 'window=24h' \
   --output observer-history.jsonl

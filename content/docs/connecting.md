@@ -1,17 +1,55 @@
 ---
 title: "Connect an application"
-description: "Route a local TypeSafe client through Observer with your existing provider credentials."
+description: "Save a database key, register provider credentials, and route a local SDK through Observer."
 section: "Getting started"
 order: 3
 ---
 
-Start Observer in normal mode before connecting an application:
+Live collection needs a saved database key and local authentication. Install Observer using the [installation guide](/docs/installation) before connecting an application. For a source build, replace `jev-observer` below with `./target/release/jev-observer`.
+
+## Save a database key
+
+Generate a 32-byte key once and save its printed 64-character hexadecimal value in a password manager. Losing this key makes encrypted history unreadable. Supply the same key on every live startup.
+
+In Bash, generate the key, save it, then read the saved value without putting it in a command-line argument or shell history:
 
 ```bash
-./target/release/jev-observer
+openssl rand -hex 32
+read -r -s -p 'Saved database key: ' JEV_OBSERVER_DB_KEY; echo
+export JEV_OBSERVER_DB_KEY
+jev-observer
 ```
 
-Change your SDK base URL to the local origin, `http://127.0.0.1:8765`. Do not append `/v1/systemone`: the tested clients add that route themselves. Keep your existing provider credential in the application environment.
+In Windows PowerShell:
+
+```powershell
+$keyBytes = New-Object byte[] 32
+$random = [Security.Cryptography.RandomNumberGenerator]::Create()
+$random.GetBytes($keyBytes)
+$random.Dispose()
+[BitConverter]::ToString($keyBytes).Replace('-', '').ToLowerInvariant()
+$savedKey = Read-Host 'Saved database key' -AsSecureString
+$env:JEV_OBSERVER_DB_KEY = [Net.NetworkCredential]::new('', $savedKey).Password
+& "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe"
+```
+
+On later starts, read the saved key again; do not generate a replacement for an existing database. Demo mode needs no database key and disables upstream forwarding.
+
+## Sign in and register a provider key
+
+Open [http://127.0.0.1:8765](http://127.0.0.1:8765). Sign in with username `observer` and the token in `.jev-observer/observer.access-token`. Observer prints the exact token-file path at startup, including when using `--db`.
+
+Run Observer from your application's directory, or choose a stable history location:
+
+```bash
+jev-observer --db /path/to/observer.sqlite
+```
+
+In the dashboard's **Connect an application** panel, enter your provider key and choose session-only storage or your operating system's credential store. Copy the local client token shown once and set it as `JEV_OBSERVER_CLIENT_TOKEN` in your application's environment. Keep it private. If the system credential store is unavailable or locked, session-only storage remains available.
+
+Observer validates this token and replaces it with the registered provider key before forwarding. The local token works for its registered workspace and is never sent to the provider. Losing it requires registering the provider key again to rotate the token. Session storage ends when Observer stops; system storage is scoped to the workspace database path. Leave `TYPESAFE_API_KEY` unset in Observer's environment if you want to use only the registered key.
+
+Change the SDK base URL to the local origin, `http://127.0.0.1:8765`. Do not append `/v1/systemone`: the tested clients add that route themselves.
 
 ## Python
 
@@ -26,7 +64,7 @@ import os
 from typesafe_sdk import TypeSafeClient
 
 client = TypeSafeClient(
-    api_key=os.environ["TYPESAFE_API_KEY"],
+    api_key=os.environ["JEV_OBSERVER_CLIENT_TOKEN"],
     base_url="http://127.0.0.1:8765",
     headers={
         "x-observer-source": "my-application",
@@ -35,7 +73,7 @@ client = TypeSafeClient(
 )
 ```
 
-Use this configured client for your existing System One calls. The environment variable must already contain your provider credential.
+Use this configured client for your existing System One calls. The environment variable contains the local client token from Observer; no additional dashboard-access header is needed.
 
 ## JavaScript
 
@@ -49,7 +87,7 @@ npm install @typesafe-ai/sdk@0.6.0
 import { TypeSafeClient } from "@typesafe-ai/sdk";
 
 const client = new TypeSafeClient({
-  apiKey: process.env.TYPESAFE_API_KEY,
+  apiKey: process.env.JEV_OBSERVER_CLIENT_TOKEN,
   baseURL: "http://127.0.0.1:8765",
   defaultHeaders: {
     "x-observer-source": "my-application",
@@ -59,6 +97,26 @@ const client = new TypeSafeClient({
 ```
 
 The JavaScript option is `baseURL`; the Python option is `base_url`.
+
+## Use a provider key directly
+
+If your application keeps the provider key, use `TYPESAFE_API_KEY` for the SDK credential and set `JEV_OBSERVER_ACCESS_TOKEN` to the workspace dashboard token. Direct provider-key requests must also include `x-observer-access`.
+
+In Python, change `api_key` to `os.environ["TYPESAFE_API_KEY"]` and add this to `headers`:
+
+```python
+"x-observer-access": os.environ["JEV_OBSERVER_ACCESS_TOKEN"]
+```
+
+In JavaScript, change `apiKey` to `process.env.TYPESAFE_API_KEY` and add this to `defaultHeaders`:
+
+```javascript
+"x-observer-access": process.env.JEV_OBSERVER_ACCESS_TOKEN
+```
+
+These tokens are separate: the dashboard access token protects local history and settings, while the registered client token authorizes forwarding with its registered provider key. Keep both private. The optional `TYPESAFE_API_KEY` fallback in Observer's process also requires the workspace access token and an `application/json` request Content-Type.
+
+Registration does not write the provider key or local client token to SQLite, exports or the status API. SQLite keeps only a hash of the local token to approve restoring a saved system credential. Replacing or removing a registered key revokes that approval. Both secrets are redacted if echoed in captured traffic.
 
 ## Request readable captures
 
@@ -85,11 +143,13 @@ Missing task context is marked unverified. Redacted definitions are conservative
 Observer forwards native `POST /v1/systemone` traffic to `https://api.typesafe.ai/v1/systemone` by default. To select another fixed compatible endpoint:
 
 ```bash
-./target/release/jev-observer \
+jev-observer \
   --upstream https://your-provider.example/v1/systemone
 ```
 
 Replace the example with your actual endpoint. The endpoint is configured when Observer starts and cannot be selected by an individual request. A caller's authorization takes precedence over an optional `TYPESAFE_API_KEY` fallback in Observer's environment.
+
+Remote upstreams require HTTPS. HTTP is accepted only for a loopback mock. Observer strips local forwarding metadata, cookies and browser origin/referrer headers before forwarding, and ignores provider `Set-Cookie` headers.
 
 Observer adds no upstream retries, caching or redirects. Your SDK can still have its own retry policy, and each attempt that reaches Observer is a separate request.
 

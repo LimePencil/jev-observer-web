@@ -24,19 +24,22 @@ Observer is configured through startup flags. The dashboard's Settings view show
 
 There is no configurable public bind address. Relative database paths are resolved from the directory where you start Observer. Demo mode uses a separate `*.demo.sqlite` sibling file.
 
-The upstream must be an absolute HTTP or HTTPS URL, without credentials, query parameters or a fragment. If you supply an origin with only `/` as its path, Observer uses `/v1/systemone`.
+The upstream must be an absolute HTTPS URL for remote providers; HTTP is accepted only for loopback mocks. Credentials, query parameters and fragments are rejected. If you supply an origin with only `/` as its path, Observer uses `/v1/systemone`.
 
 Retention settings must be positive. Maintenance runs every 30 seconds, so the record cap is soft and does not bound allocated disk bytes.
 
 ## Credentials and privacy
 
-| Option                                  | Default       | Purpose                                                     |
-| --------------------------------------- | ------------- | ----------------------------------------------------------- |
-| `TYPESAFE_API_KEY` environment variable | Unset         | Optional fallback credential for upstream forwarding        |
-| `--capture-state`                       | Disabled      | Retain raw input state                                      |
-| `--redact-key KEY`                      | No extra keys | Add a field name to stored-data redaction; repeat as needed |
+| Option                                     | Default       | Purpose                                                                              |
+| ------------------------------------------ | ------------- | ------------------------------------------------------------------------------------ |
+| `JEV_OBSERVER_DB_KEY` environment variable | Unset         | Required 64-character hexadecimal key for encrypted live history; not needed in demo |
+| `TYPESAFE_API_KEY` environment variable    | Unset         | Optional fallback credential for upstream forwarding                                 |
+| `--capture-state`                          | Disabled      | Retain raw input state                                                               |
+| `--redact-key KEY`                         | No extra keys | Add a field name to stored-data redaction; repeat as needed                          |
 
-Caller authorization takes precedence over the fallback environment variable. Keep credentials in your environment instead of writing them into source or command arguments.
+Live startup requires the same saved database key for the selected database. Supply it through the environment, never a command-line argument. The dashboard requires username `observer` and the workspace access token whose path is printed at startup.
+
+Register a provider key in **Connect an application** and use the generated local client token in your SDK, or use a provider key directly with `x-observer-access` containing the dashboard token. Caller authorization takes precedence over the fallback environment variable. Fallback requests also require the access token and `application/json`. See [connection setup](/docs/connecting) for complete examples.
 
 Definitions, answers and supported extensions are retained even when state capture is disabled. See [data and privacy](/docs/data-and-privacy) for the limits of redaction and local storage.
 
@@ -81,9 +84,9 @@ Observer does not maintain an automatic provider price list or calculate an invo
 Open **Settings** in the dashboard, or read the local API:
 
 ```bash
-curl http://127.0.0.1:8765/api/settings
+curl --user observer http://127.0.0.1:8765/api/settings
 ```
 
-The response contains public configuration and the application version. Credentials are excluded. Independent collection health is available at `/api/health`.
+Curl prompts for the workspace access token as the password, keeping it out of the command line. The response contains public configuration and the application version. Credentials are excluded. Independent collection health is available at `/api/health` and also requires authentication.
 
 Source: [CLI implementation and validation](https://github.com/LimePencil/jev-observer/blob/main/src/config.rs).

@@ -51,7 +51,7 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
-The website repository is private. The application source repository was also private when reviewed, so the site explicitly notes that source builds and GitHub links require repository access. Before a public application release, update that copy to match the actual source availability. Do not imply a packaged installer, verified cross-platform distribution, universal provider support, production readiness, or lossless capture.
+The website repository is private; the application source and releases are public. Version 0.1.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
 The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
 

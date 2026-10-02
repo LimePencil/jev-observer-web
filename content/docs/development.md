@@ -7,7 +7,7 @@ order: 8
 
 The application repository contains the local Rust executable and its React dashboard. This documentation website is a separate Next.js project. Website changes do not rebuild the Observer executable.
 
-Follow [installation](/docs/installation) for prerequisites and the initial checkout. The application uses Rust edition 2024, SQLite through bundled `rusqlite`, and React, TypeScript and Vite for the dashboard.
+Follow [installation](/docs/installation) for prerequisites and the initial checkout. The application uses Rust edition 2024, SQLCipher through bundled `rusqlite` for live history, and React, TypeScript and Vite for the dashboard.
 
 ## Run the application locally
 
@@ -25,7 +25,7 @@ This starts the backend on `127.0.0.1:8765` using the isolated sample database. 
 npm run dev --prefix ui
 ```
 
-Open the address Vite prints. Its development server forwards `/api` to the backend on port 8765. For normal collection, run the backend without `--demo` and send SDK traffic to the backend's origin.
+Open the address Vite prints. Its development server forwards `/api` to the backend on port 8765. Authenticate API requests with username `observer` and the demo workspace token whose path the backend prints. The backend's own dashboard at `http://127.0.0.1:8765` uses the same credentials. For normal collection, [supply the saved database key and configure credentials](/docs/connecting), run without `--demo`, and send SDK traffic to the backend's origin.
 
 The Vite proxy adjusts the Origin only for its own same-origin development requests. Foreign origins remain subject to the backend guard. Keep the backend on port 8765 unless you deliberately update the development proxy configuration.
 
@@ -48,6 +48,7 @@ From the application repository root:
 cargo fmt --all --check
 cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
+python3 scripts/test-install.py
 npx --prefix ui playwright install chromium
 npm test --prefix ui
 ```
@@ -93,10 +94,10 @@ node scripts/benchmark.mjs \
 
 The harness uses a loopback mock and temporary database. Results identify the executable, workload, settings, counts and host. Do not run other builds or load tests concurrently when you need interpretable measurements.
 
-Read the [performance report](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md) before interpreting numbers. These checks measure a specific local workload, not provider capacity, a latency guarantee or every possible history shape.
+Read the [performance report](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md) before interpreting numbers. Historical results predate encrypted live history and are not current capacity claims. These checks measure a specific local workload, not provider capacity, a latency guarantee or every possible history shape.
 
 ## Understand continuous integration
 
-The application workflow builds the dashboard before compiling Rust, runs formatting, Clippy, Rust and browser checks, builds the release executable, and runs both pinned SDKs against a local mock.
+The application workflow builds the dashboard before compiling Rust, runs formatting, Clippy, Rust, installer and browser checks, builds the release executable, and runs both pinned SDKs against a local mock. The separate [release workflow](https://github.com/LimePencil/jev-observer/blob/main/.github/workflows/release.yml) verifies all six native packages, including authenticated live/demo startup, before publication; Windows also runs PowerShell installation and upgrade checks.
 
 Use the [CI workflow](https://github.com/LimePencil/jev-observer/blob/main/.github/workflows/ci.yml) as the reproducible check sequence. For design boundaries and module ownership, continue to [architecture](/docs/architecture).

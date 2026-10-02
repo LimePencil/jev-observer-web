@@ -25,7 +25,17 @@ Known credential fields and the forwarded secret are redacted from saved data. Y
   --redact-key customer_secret
 ```
 
-Redaction cannot promise to recognize every sensitive value. Definitions changed by redaction are kept separate because their original equivalence is no longer verifiable. SQLite history and exported files are not encrypted by the application.
+Redaction cannot promise to recognize every sensitive value. Definitions changed by redaction are kept separate because their original equivalence is no longer verifiable.
+
+## Encryption and local access
+
+Live SQLite history is encrypted with SQLCipher using the externally supplied `JEV_OBSERVER_DB_KEY`. [Generate and save a 32-byte database key](/docs/connecting#save-a-database-key) before starting normal collection, and supply the same 64-character hexadecimal value on every live startup. Losing the key makes encrypted history unreadable.
+
+On first startup with an existing plaintext database, Observer migrates it before serving requests. Stop older Observer processes first. Old backups and deleted disk blocks may still contain plaintext. Demo history is synthetic and remains plaintext. JSONL and CSV exports are deliberate plaintext downloads; protect them when storing or sharing them.
+
+The dashboard and local API require HTTP Basic authentication: username `observer` and the random workspace token in the database's sibling `*.access-token` file. Startup output gives its exact path. The default live token is `.jev-observer/observer.access-token`; demo uses `.jev-observer/observer.demo.access-token`. Keep this token private.
+
+On Windows, the default `.jev-observer` directory receives a private current-user ACL. Custom database directories must already restrict access to the current user, SYSTEM and administrators. Token files have protected current-user ACLs; permissive files and reparse points are rejected.
 
 ## Import records
 
@@ -69,7 +79,7 @@ These are age and record limits, not a disk-byte limit. Deleting rows does not n
 
 ## Back up the database
 
-For a complete filesystem backup, stop Observer cleanly before copying the configured database and any remaining SQLite sidecar files. By default they live under `.jev-observer` in the working directory. Use your normal filesystem backup tool after the process has exited.
+For a complete filesystem backup, stop Observer cleanly before copying the configured database and any remaining SQLite sidecar files. By default they live under `.jev-observer` in the working directory. Use your normal filesystem backup tool after the process has exited. Retain the live database key separately in a password manager; the encrypted backup cannot be read without it. Older plaintext backups remain plaintext after the active database is migrated.
 
 JSONL exports are useful portable application records. They are not a replacement for a complete database backup.
 

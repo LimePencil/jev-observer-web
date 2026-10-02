@@ -193,7 +193,8 @@ export default function Home() {
             <GitBranch size={23} />
             <p>
               <strong>MIT licensed. Still taking shape.</strong> A working
-              prototype. Source access requires a repository invitation.
+              prototype with public source and native packages for Linux, macOS
+              and Windows.
             </p>
             <a
               href={site.repo}

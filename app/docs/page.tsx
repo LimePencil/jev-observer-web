@@ -45,7 +45,7 @@ export default function DocsHome() {
         <div>
           <strong>Your first look at Observer</strong>
           <span>
-            Build from source and explore the sample. No API key needed.
+            Install Observer and explore the sample. No provider key needed.
           </span>
         </div>
         <ArrowRight size={23} />
