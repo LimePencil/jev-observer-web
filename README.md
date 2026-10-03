@@ -53,7 +53,7 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
-The website repository is private; the application source and releases are public. Version 0.2.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
+The website and application repositories are public and MIT-licensed. Version 0.2.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
 The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
 
@@ -64,3 +64,9 @@ Import limits apply to decoded UTF-8 text (8 MiB and 10,000 records), with JSON 
 ## Scope
 
 This is a presentation and documentation site. It never connects to a visitor's local Observer, collects their request history, or handles provider credentials. Copying a command does not execute it. The product tour displays real screenshots, not a hosted live dashboard.
+
+## License
+
+This website is [MIT-licensed](LICENSE), copyright 2026 Jaeyoung Shin. Bundled Geist and Geist Mono fonts retain their SIL Open Font License notices in `public/fonts/`. The npm `private: true` flag prevents accidental package publication; the source repository is public.
+
+Changes to `main` require a pull request, the GitHub Actions `verify` check and resolved review conversations. The branch must be current with `main`; force-pushes and deletion are blocked, including for administrators. No additional approving reviewer is required while this repository has one maintainer.

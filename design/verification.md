@@ -1,12 +1,20 @@
 # Verification
 
-## Current review: October 3, 2026 — Observer 0.2.0
+## Public launch: October 3, 2026
+
+The owner approved public visibility, an MIT website license and protection for `main` after the release-alignment review below. The repository is public. The root [LICENSE](../LICENSE) uses the same MIT text and 2026 Jaeyoung Shin copyright as the application; package metadata also declares MIT. The bundled font notices remain intact. The npm `private: true` safeguard is independent of source visibility.
+
+Protection for `main` requires a pull request, the `verify` status check supplied by GitHub Actions (app ID 15368), an up-to-date branch and resolved review conversations. The restrictions apply to administrators. Force-pushes and branch deletion are disabled. Additional approving reviewers are set to zero because LimePencil is currently the sole maintainer; pull requests and CI remain required. Stale approvals are dismissed when new commits are pushed.
+
+License text, package/lockfile metadata, Markdown formatting and diff checks passed. This change does not modify runtime code or dependencies. The existing development-tool advisory remains recorded below. The pre-launch assessment preserves the repository settings and findings observed before this authorization.
+
+## Release alignment review: October 3, 2026 — Observer 0.2.0
 
 Aligned the website with the published [v0.2.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0), published October 3 at 01:24:44 UTC. The tag resolves to `55a6e47a6c2c134d2f45e712c9124ae333fc2856`. GitHub release metadata confirmed all six native packages and `SHA256SUMS`.
 
 The homepage, overview, install commands, package version and guides now cover 0.2.0. Connection guidance distinguishes registered bearer credentials from the workspace token used for an unauthenticated loopback model. It includes OpenRouter, local Laya, longer SDK timeouts, provider-reported USD cost, Score consistency warnings, history pagination, server-side group search, custom dates, definition-comparison limits, safe upgrades and credential downgrade behavior. Real-provider evidence stays separate from mock SDK verification. All three tour screenshots were recaptured from the checksum-verified published Linux ARM64 package using 720 synthetic demo requests; see [screenshot provenance](screenshots.md).
 
-### Public-repository assessment
+### Pre-launch public-repository assessment
 
 The repository is currently **private**. The code and content passed the public-review checks below, but the website needs its own license decision before being presented as open source. The application's MIT license and the homepage's application-license claim do not establish a license for this separate website repository.
 
