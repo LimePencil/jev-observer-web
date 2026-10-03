@@ -5,7 +5,7 @@ section: "Getting started"
 order: 2
 ---
 
-Jev Observer 0.1.0 runs as one executable with its dashboard, fonts and SQLite included. Prebuilt releases need no Rust, Node.js, database server or administrator access. The [application source](https://github.com/LimePencil/jev-observer) and [release downloads](https://github.com/LimePencil/jev-observer/releases/tag/v0.1.0) are public.
+Jev Observer 0.2.0 runs as one executable with its dashboard, fonts and SQLite included. Prebuilt releases need no Rust, Node.js, database server or administrator access. The [application source](https://github.com/LimePencil/jev-observer) and [release downloads](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0) are public.
 
 ## Install a release
 
@@ -13,7 +13,7 @@ Linux and macOS:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/LimePencil/jev-observer/main/install.sh -o install.sh
-sh install.sh --version 0.1.0
+sh install.sh --version 0.2.0
 export PATH="$HOME/.local/bin:$PATH"
 jev-observer --demo
 ```
@@ -22,7 +22,7 @@ Windows PowerShell:
 
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/LimePencil/jev-observer/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 0.1.0
+.\install.ps1 -Version 0.2.0
 & "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe" --demo
 ```
 
@@ -112,12 +112,12 @@ In PowerShell, run `npm` and `cargo` as above, then `.\target\release\jev-observ
 
 ## Update an existing build
 
-Stop Observer before upgrading. Rerun the installer with the desired version; omit the version option to select the latest published release. Failed downloads or verification preserve the installed executable. An upgrade does not itself move, delete or migrate history.
+Stop Observer cleanly before upgrading to 0.2.0. Back up the database, any remaining SQLite sidecars and the workspace dashboard-token file. Keep access to the saved `JEV_OBSERVER_DB_KEY` and retain the previous executable if you need to test rollback.
 
-For source builds, rebuild the dashboard and executable using the same sequence. Make a [complete filesystem backup](/docs/data-and-privacy#back-up-the-database) before changing versions and retain the database key separately. Stop older processes before starting the current version against a legacy plaintext database; migration runs before requests are served.
+Rerun the installer with `--version 0.2.0` on Unix or `-Version 0.2.0` in PowerShell. Omit the version option to select the latest published release. Failed downloads or verification preserve the installed executable. Installation does not move or migrate history; the new executable upgrades supported query indexes on startup. Unsupported database schemas are rejected before encryption or other rewriting.
 
-Discard development binaries from the earlier private release history and install this public `v0.1.0` before collecting live traffic. Those discarded release numbers do not identify the current build.
+Version 0.2.0 reads provider credentials saved by 0.1.0. After saving or rotating a persisted provider key in 0.2.0, the new credential-store entry cannot be read by 0.1.0. If you downgrade, re-register the provider key and update the application's local client token. Restoring only an older SQLite backup cannot restore an OS credential entry removed by a later rotation. Session-only credentials need registration after every restart.
 
-See [troubleshooting](/docs/troubleshooting) and the application's [installation guide](https://github.com/LimePencil/jev-observer/blob/main/docs/installation.md) for paths, uninstalling and platform errors.
+For source builds, rebuild the dashboard and executable using the same sequence. Restore a [complete filesystem backup](/docs/data-and-privacy#back-up-the-database) only while every Observer process using that workspace is stopped. Keep the database key separately: it is not the provider key.
 
-Source: [current installation](https://github.com/LimePencil/jev-observer/blob/main/README.md#install-and-try-the-sample), [source builds](https://github.com/LimePencil/jev-observer/blob/main/README.md#build-from-source) and [asset embedding](https://github.com/LimePencil/jev-observer/blob/main/build.rs).
+See the [0.2.0 release notes](https://github.com/LimePencil/jev-observer/blob/v0.2.0/docs/releases/0.2.0.md) for the verified changes and limits.

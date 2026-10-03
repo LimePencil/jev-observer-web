@@ -57,7 +57,7 @@ cargo build --release --locked
 
 For SDK-sensitive changes, run the [local compatibility check](/docs/development#reproduce-sdk-compatibility). For proxy or storage performance changes, describe a workload and use the [benchmark procedure](/docs/development#measure-representative-load).
 
-Browser interaction tests use synthetic API fixtures. Passing them does not establish live-provider compatibility or backend throughput. Keep those evidence boundaries explicit in a pull request.
+Browser interaction tests use synthetic API fixtures; the separate integration journey exercises the actual backend and a loopback mock through the production dashboard. Run `npm run test:integration --prefix ui` after building the executable for backend-sensitive UI changes. Passing these checks does not establish live-provider compatibility or backend throughput. Keep those evidence boundaries explicit in a pull request.
 
 ## Write useful performance evidence
 

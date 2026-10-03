@@ -13,18 +13,22 @@ jev-observer --help
 
 ## Listener and history
 
-| Option             | Default                                | Purpose                                             |
-| ------------------ | -------------------------------------- | --------------------------------------------------- |
-| `--port`           | `8765`                                 | Port on `127.0.0.1`                                 |
-| `--db`             | `.jev-observer/observer.sqlite`        | SQLite file path                                    |
-| `--upstream`       | `https://api.typesafe.ai/v1/systemone` | Fixed upstream endpoint                             |
-| `--retention-days` | `7`                                    | Maximum record age                                  |
-| `--max-records`    | `1000000`                              | Soft retained-record cap                            |
-| `--demo`           | Disabled                               | Isolated synthetic history with forwarding disabled |
+| Option             | Default                                | Purpose                                              |
+| ------------------ | -------------------------------------- | ---------------------------------------------------- |
+| `--port`           | `8765`                                 | Port on `127.0.0.1`                                  |
+| `--db`             | `.jev-observer/observer.sqlite`        | SQLite file path                                     |
+| `--upstream`       | `https://api.typesafe.ai/v1/systemone` | Fixed upstream endpoint                              |
+| `--upstream-auth`  | `bearer`                               | Provider credentials, or `none` for a loopback model |
+| `--provider`       | Inferred from upstream hostname        | Recorded provider label; `laya` selects its adapter  |
+| `--retention-days` | `7`                                    | Maximum record age                                   |
+| `--max-records`    | `1000000`                              | Soft retained-record cap                             |
+| `--demo`           | Disabled                               | Isolated synthetic history with forwarding disabled  |
 
 There is no configurable public bind address. Relative database paths are resolved from the directory where you start Observer. Demo mode uses a separate `*.demo.sqlite` sibling file.
 
-The upstream must be an absolute HTTPS URL for remote providers; HTTP is accepted only for loopback mocks. Credentials, query parameters and fragments are rejected. If you supply an origin with only `/` as its path, Observer uses `/v1/systemone`.
+The upstream must be an absolute HTTPS URL for remote providers; HTTP is accepted only for loopback servers. Credentials, query parameters and fragments are rejected. If you supply an origin with only `/` as its path, Observer uses `/v1/systemone`.
+
+`--upstream-auth none` requires a loopback endpoint. It disables provider authentication while still requiring the workspace access token for callers, and ignores `TYPESAFE_API_KEY`. Use [local Laya setup](/docs/connecting#local-laya-models) for matching SDK credentials and timeouts. Provider labels contain 1 to 64 letters, digits, dots, hyphens or underscores and are normalized to lowercase. OpenRouter is recognized automatically from its upstream hostname.
 
 Retention settings must be positive. Maintenance runs every 30 seconds, so the record cap is soft and does not bound allocated disk bytes.
 
@@ -40,6 +44,8 @@ Retention settings must be positive. Maintenance runs every 30 seconds, so the r
 Live startup requires the same saved database key for the selected database. Supply it through the environment, never a command-line argument. The dashboard requires username `observer` and the workspace access token whose path is printed at startup.
 
 Register a provider key in **Connect an application** and use the generated local client token in your SDK, or use a provider key directly with `x-observer-access` containing the dashboard token. Caller authorization takes precedence over the fallback environment variable. Fallback requests also require the access token and `application/json`. See [connection setup](/docs/connecting) for complete examples.
+
+For `--upstream-auth none`, use the dashboard access token as the SDK credential without provider-key registration. The connection panel shows the selected provider, endpoint and authentication mode.
 
 Definitions, answers and supported extensions are retained even when state capture is disabled. See [data and privacy](/docs/data-and-privacy) for the limits of redaction and local storage.
 
@@ -65,6 +71,8 @@ Full bodies can forward while their saved observations are truncated. If the cap
 
 ## Estimate costs
 
+Version 0.2.0 records validated OpenRouter `usage.cost` as provider-reported USD. This takes precedence over estimates and retains its cost basis in history and exports. Other providers' undocumented cost fields remain extensions and are not assumed to be USD.
+
 Provide both an input and output rate in USD per million tokens. Use rates appropriate for your own provider and model arrangement.
 
 ```bash
@@ -75,7 +83,7 @@ jev-observer \
 
 These numbers are illustrative arithmetic, not TypeSafe pricing. Each rate must be finite and nonnegative. A free output rate can be expressed as `0`.
 
-An estimate needs both rates and usable token counts. Missing inputs remain unknown rather than becoming a zero cost. Cost is attached once to the parent request, even when that request contains several answers. The dashboard displays coverage when only some requests have estimates.
+An estimate needs both rates and usable token counts. Missing inputs remain unknown rather than becoming a zero cost. Cost is attached once to the parent request, even when that request contains several answers. The dashboard displays known-cost coverage and distinguishes reported costs from configured estimates.
 
 Observer does not maintain an automatic provider price list or calculate an invoice. Synthetic sample costs are labeled separately.
 

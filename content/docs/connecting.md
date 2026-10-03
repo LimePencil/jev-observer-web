@@ -1,6 +1,6 @@
 ---
 title: "Connect an application"
-description: "Save a database key, register provider credentials, and route a local SDK through Observer."
+description: "Connect TypeSafe, OpenRouter or a local Laya model with encrypted history and local authentication."
 section: "Getting started"
 order: 3
 ---
@@ -11,14 +11,14 @@ If the sample is still running, stop it with `Ctrl-C` before starting live Obser
 
 ## Know which key to use
 
-| Credential             | Where you use it                                  | Where it comes from                                  |
-| ---------------------- | ------------------------------------------------- | ---------------------------------------------------- |
-| Database key           | `JEV_OBSERVER_DB_KEY` when starting live Observer | Generate once below and save for this database       |
-| Dashboard access token | Browser password for username `observer`          | The `*.access-token` file whose path Observer prints |
-| Provider API key       | **Connect an application** in the live dashboard  | Your TypeSafe provider account                       |
-| Local client token     | Your application's SDK `api_key` or `apiKey`      | Shown once after registering the provider key        |
+| Credential             | Where you use it                                  | Where it comes from                                     |
+| ---------------------- | ------------------------------------------------- | ------------------------------------------------------- |
+| Database key           | `JEV_OBSERVER_DB_KEY` when starting live Observer | Generate once below and save for this database          |
+| Dashboard access token | Browser password for username `observer`          | The `*.access-token` file whose path Observer prints    |
+| Provider API key       | **Connect an application** in bearer mode         | Your TypeSafe, OpenRouter or authenticated local server |
+| Local client token     | Your application's SDK `api_key` or `apiKey`      | Shown once after registering the provider key           |
 
-Demo needs only its dashboard access token. For live collection, keep the database key available across restarts and copy the local client token before leaving the connection panel.
+Demo needs only its dashboard access token. For live collection, keep the database key available across restarts and copy the local client token before leaving the connection panel. A local model running with `--upstream-auth none` needs no provider key or registration: use the dashboard access token as the SDK credential, as described in [local Laya setup](/docs/connecting#local-laya-models).
 
 ## Save a database key
 
@@ -68,7 +68,7 @@ Run Observer from your application's directory, or choose a stable history locat
 jev-observer --db /path/to/observer.sqlite
 ```
 
-In the dashboard's **Connect an application** panel, enter your provider key and choose session-only storage or your operating system's credential store. Copy the local client token shown once and set it as `JEV_OBSERVER_CLIENT_TOKEN` in your application's environment. Keep it private. If the system credential store is unavailable or locked, session-only storage remains available.
+In the dashboard's **Connect an application** panel, check the configured provider, endpoint and authentication mode, then enter your provider key and choose session-only storage or your operating system's credential store. Copy the local client token shown once and set it as `JEV_OBSERVER_CLIENT_TOKEN` in your application's environment. Keep it private. If the system credential store is unavailable or locked, session-only storage remains available. In 0.2.0, a failed credential replacement preserves the previous active credential and saved approval.
 
 Observer validates this token and replaces it with the registered provider key before forwarding. The local token works for its registered workspace and is never sent to the provider. Losing it requires registering the provider key again to rotate the token. Session storage ends when Observer stops; system storage is scoped to the workspace database path. Leave `TYPESAFE_API_KEY` unset in Observer's environment if you want to use only the registered key.
 
@@ -172,18 +172,82 @@ jev-observer \
 
 Replace the example with your actual endpoint. The endpoint is configured when Observer starts and cannot be selected by an individual request. A caller's authorization takes precedence over an optional `TYPESAFE_API_KEY` fallback in Observer's environment.
 
-Remote upstreams require HTTPS. HTTP is accepted only for a loopback mock. Observer strips local forwarding metadata, cookies and browser origin/referrer headers before forwarding, and ignores provider `Set-Cookie` headers.
+Remote upstreams require HTTPS. HTTP is accepted only for loopback servers, including local models and mocks. Observer strips local forwarding metadata, cookies and browser origin/referrer headers before forwarding, and ignores provider `Set-Cookie` headers.
 
 Observer adds no upstream retries, caching or redirects. Your SDK can still have its own retry policy, and each attempt that reaches Observer is a separate request.
 
+## Jev through OpenRouter
+
+After supplying your saved `JEV_OBSERVER_DB_KEY`, start Observer with OpenRouter's System One endpoint:
+
+```bash
+jev-observer --upstream https://openrouter.ai/api/v1/systemone
+```
+
+Register your OpenRouter key in **Connect an application**, then use the returned local client token in either SDK example above. Keep the SDK base URL at `http://127.0.0.1:8765` and request identity encoding. Use a Jev model such as `jev-1.13` in your application's System One call. Observer recognizes OpenRouter from its hostname and records validated `usage.cost` as provider-reported USD, ahead of configured estimates. Calls are billed to your OpenRouter account.
+
+The [real OpenRouter check](https://github.com/LimePencil/jev-observer/blob/v0.2.0/docs/compatibility.md#live-openrouter-check) used Python's standard HTTP client. It is separate from the official SDK mock checks and does not establish live compatibility of every SDK.
+
+## Local Laya models
+
+This setup requires Observer **0.2.0 or later**. Start the model server separately; Observer does not download or host it. The reviewed setup used `laya[serve]==0.3.23` with its English checkpoint and CPU inference. Install that package in a separate Python environment, then start it bound to loopback with `LAYA_API_KEY` unset:
+
+```bash
+LAYA_HOST=127.0.0.1 LAYA_PORT=8000 LAYA_MODELS=english \
+  LAYA_DEFAULT_MODEL=english LAYA_DEVICE=cpu laya-serve
+```
+
+In another terminal, supply your saved `JEV_OBSERVER_DB_KEY` and start Observer:
+
+```bash
+jev-observer --upstream http://127.0.0.1:8000/v1/systemone \
+  --upstream-auth none --provider laya
+```
+
+Sign in to Observer normally. Read the token from `.jev-observer/observer.access-token` into `JEV_OBSERVER_ACCESS_TOKEN` privately. Use that workspace token as the SDK credential, keep the base URL at Observer's origin, and set the model to `english` in your existing call. No provider-key registration is needed in this mode.
+
+For Python:
+
+```python
+client = TypeSafeClient(
+    api_key=os.environ["JEV_OBSERVER_ACCESS_TOKEN"],
+    base_url="http://127.0.0.1:8765",
+    timeout=180,
+    headers={
+        "x-observer-source": "local-laya",
+        "Accept-Encoding": "identity",
+    },
+)
+```
+
+For JavaScript:
+
+```javascript
+const client = new TypeSafeClient({
+  apiKey: process.env.JEV_OBSERVER_ACCESS_TOKEN,
+  baseURL: "http://127.0.0.1:8765",
+  timeout: 180000,
+  defaultHeaders: {
+    "x-observer-source": "local-laya",
+    "Accept-Encoding": "identity",
+  },
+});
+```
+
+Use the imports and pinned SDK installs from the examples above. Python's timeout is in seconds; JavaScript's is in milliseconds. CPU inference can exceed the SDKs' ten-second defaults, so tune the timeout for your model and machine.
+
+`--upstream-auth none` requires a loopback upstream. Observer still authenticates every caller and removes local authorization before forwarding. Inherited `TYPESAFE_API_KEY` values are ignored. If Laya requires `LAYA_API_KEY`, keep Observer's default bearer mode, register that key, and use its local client token instead; keep the longer timeout.
+
+The `laya` adapter handles four-decimal probabilities, string-list or object Choice criteria, and one to 32 Score levels. Zero reported output tokens stay zero; unreported costs stay unknown. Batch routes, extended numeric Choice labels, abstention-specific semantics and chat endpoints are outside this typed-capture scope. Other compatible local servers can use a descriptive `--provider` label and standard Jev validation. See the [exact local inference evidence](https://github.com/LimePencil/jev-observer/blob/v0.2.0/docs/compatibility.md#live-laya-check) for tested versions and limits.
+
 ## Verify the connection
 
-Run one of your application's existing calls, then open the dashboard. Select the source name you configured and inspect the new request. Check its response status, capture completeness and typed answers. Costs remain unknown until both usage and [configured price estimates](/docs/configuration#estimate-costs) are available.
+Run one of your application's existing calls, then open the dashboard. The connection panel confirms the first saved request. Select the source name you configured and inspect the response status, capture completeness and typed answers. Costs remain unknown unless usable provider-reported USD cost or usage with [configured price estimates](/docs/configuration#estimate-costs) is available.
 
 A deployed application cannot reach Observer through your computer's loopback address. This workflow is for applications that can access the same local listener. To inspect existing remote activity, use a supported [record import](/docs/data-and-privacy#import-records).
 
 ## Compatibility boundary
 
-The pinned Python and JavaScript clients passed local checks for success/error forwarding, repeated definitions, definition changes, redaction and request-level usage accounting. No paid inference or real provider connection was used. Async Python, browser SDKs, model-list routes, provider gateway dialects and every SDK version were not covered.
+The pinned Python and JavaScript clients passed local mock checks for success/error forwarding, repeated definitions, definition changes, redaction and request-level usage accounting. Those SDK checks used no paid inference or real provider credentials. Separate 0.2.0 checks exercised real OpenRouter and local Laya inference; they do not establish live official-SDK or direct TypeSafe compatibility. Async Python, browser SDKs, model-list routes, arbitrary provider gateway dialects and every SDK version were not covered.
 
 For exact fixtures and reproduction commands, see [SDK compatibility evidence](https://github.com/LimePencil/jev-observer/blob/main/docs/compatibility.md).

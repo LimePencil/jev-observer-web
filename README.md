@@ -1,6 +1,6 @@
 # Jev Observer website
 
-A separate, private Next.js website for [Jev Observer](https://github.com/LimePencil/jev-observer): a responsive introduction, real dashboard tour, installation instructions, user guides, and developer documentation.
+A separate Next.js website for [Jev Observer](https://github.com/LimePencil/jev-observer): a responsive introduction, real dashboard tour, installation instructions, user guides, and developer documentation.
 
 ## Develop
 
@@ -15,7 +15,7 @@ Open http://localhost:3000. This website has no dependency on a running Observer
 
 ## Deploy on Vercel
 
-1. Import the private `LimePencil/jev-observer-web` GitHub repository into your Vercel account. Grant Vercel access to this repository when asked.
+1. Import the `LimePencil/jev-observer-web` GitHub repository into your Vercel account. Grant Vercel access to this repository when asked.
 2. Keep the framework preset **Next.js**, root directory **.**, install command **npm ci**, and build command **npm run build**. Use Node.js **22.x** or later supported by Vercel. Leave the output directory at the framework default.
 3. Deploy. No environment variables are required. The website does not deploy the Observer proxy or its SQLite database.
 4. After assigning a production domain, optionally set `NEXT_PUBLIC_SITE_URL` to the full HTTPS origin (for example your own domain) and redeploy. Without it, metadata and sitemap use Vercel's production URL; local builds use `http://localhost:3000`.
@@ -53,11 +53,13 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
-The website repository is private; the application source and releases are public. Version 0.1.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
+The website repository is private; the application source and releases are public. Version 0.2.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
 The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
 
-The latest alignment review on October 2, 2026 checked fetched application `main` at [`d3e4886`](https://github.com/LimePencil/jev-observer/commit/d3e4886955990087bda970f645756ae5b5d9ee3b) and the published [v0.1.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.1.0). The release includes all six native packages. Import limits apply to decoded UTF-8 text (8 MiB and 10,000 records), with JSON transport overhead allowed separately. Dashboard documentation should preserve the difference between pausing visible updates and continuing collection.
+The latest alignment review on October 3, 2026 checked the published [v0.2.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0), whose tag resolves to [`55a6e47`](https://github.com/LimePencil/jev-observer/commit/55a6e47a6c2c134d2f45e712c9124ae333fc2856). It includes all six native packages. Guides cover local Laya authentication and SDK timeouts, OpenRouter-reported cost, Score consistency warnings, history pagination, group search, date ranges, comparison limits and credential downgrade behavior. Tour screenshots come from the checksum-verified 0.2.0 Linux ARM64 package using synthetic demo data.
+
+Import limits apply to decoded UTF-8 text (8 MiB and 10,000 records), with JSON transport overhead allowed separately. Dashboard documentation preserves the difference between pausing visible updates and continuing collection. See [verification](design/verification.md) for current checks and the public-repository assessment.
 
 ## Scope
 

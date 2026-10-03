@@ -34,7 +34,7 @@ Application -> Local HTTP proxy -> Configured upstream
 
 ## Forwarding and capture
 
-The proxy handles native `POST /v1/systemone` at one configured upstream URL. Registered local client tokens are validated and replaced with their provider key. Direct provider-key and optional process-fallback requests require the workspace token in `X-Observer-Access`; fallback also requires `application/json`. Caller authorization takes precedence over the fallback. Remote upstreams require HTTPS; HTTP is allowed only for loopback mocks. Observer strips hop-by-hop headers, local `x-observer-*` metadata, cookies and browser origin/referrer headers before forwarding, and discards provider `Set-Cookie` headers.
+The proxy handles native `POST /v1/systemone` at one configured upstream URL. Registered local client tokens are validated and replaced with their provider key. Direct provider-key and optional process-fallback requests require the workspace token in `X-Observer-Access`; fallback also requires `application/json`. Caller authorization takes precedence over the fallback. Remote upstreams require HTTPS; HTTP is allowed only for loopback servers. With `--upstream-auth none`, the upstream must be loopback, callers authenticate with the workspace access token, and local authorization is removed before forwarding. No provider key is registered in this mode. Observer strips hop-by-hop headers, local `x-observer-*` metadata, cookies and browser origin/referrer headers before forwarding, and discards provider `Set-Cookie` headers.
 
 The upstream client disables redirects, automatic retries and response decompression. It forwards full bodies while separately retaining bounded copies. An oversized or unsupported compressed body can therefore have a successful forwarded response and an incomplete saved capture.
 
@@ -44,7 +44,9 @@ One dedicated writer handles normalization and batched persistence outside the a
 
 ## Normalized records and grouping
 
-The model contains parent request records, typed answers, imported application actions and local review labels. Usage and configured cost belong to the parent request. Invalid answers and failed-request placeholders do not enter valid distributions.
+The model contains parent request records, typed answers, imported application actions and local review labels. Usage and reported or estimated cost belong to the parent request. Validated OpenRouter USD cost takes precedence over configured estimates and retains its basis. Invalid answers and failed-request placeholders do not enter valid distributions. Structurally valid Score discrepancies retain original values with consistency warnings; the `laya` provider adapter handles its typed criteria and probability precision.
+
+Dashboard queries support cursor pagination for requests and groups, server-side group search and explicit date bounds. Whole-scope totals remain independent of the visible page. Adaptive timelines cover the selected range. Definition comparisons are queried separately from overview polling.
 
 Grouping fingerprints include source, key, full definition, presentation and supplied task version. JSON object insertion order must be preserved so presentation differences remain inspectable. Families are separate from strict identity and require an explicit reviewed adapter.
 

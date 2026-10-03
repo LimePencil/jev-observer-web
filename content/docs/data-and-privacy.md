@@ -35,6 +35,8 @@ Live SQLite history is encrypted with SQLCipher using the externally supplied `J
 
 On first startup with an existing plaintext database, Observer migrates it before serving requests. Stop older Observer processes first. Old backups and deleted disk blocks may still contain plaintext. The demo database remains plaintext, including any records you import into it. JSONL and CSV exports are deliberate plaintext downloads; protect them when storing or sharing them.
 
+Version 0.2.0 rejects unsupported plaintext and encrypted database schemas before changing their contents, including checking committed crash-left WAL state. Keep the database and any remaining sidecars together when backing up or restoring.
+
 The dashboard and local API require HTTP Basic authentication: username `observer` and the random workspace token in the database's sibling `*.access-token` file. Startup output gives its exact path. The default live token is `.jev-observer/observer.access-token`; demo uses `.jev-observer/observer.demo.access-token`. Keep this token private.
 
 On Windows, the default `.jev-observer` directory receives a private current-user ACL. Custom database directories must already restrict access to the current user, SYSTEM and administrators. Token files have protected current-user ACLs; permissive files and reparse points are rejected.
@@ -85,7 +87,9 @@ These are age and record limits, not a disk-byte limit. Deleting rows does not n
 
 ## Back up the database
 
-For a complete filesystem backup, stop Observer cleanly before copying the configured database and any remaining SQLite sidecar files. By default they live under `.jev-observer` in the working directory. Use your normal filesystem backup tool after the process has exited. Retain the live database key separately in a password manager; the encrypted backup cannot be read without it. Older plaintext backups remain plaintext after the active database is migrated.
+For a complete filesystem backup, stop Observer cleanly before copying the configured database, any remaining SQLite sidecar files and the workspace dashboard-token file. By default they live under `.jev-observer` in the working directory. Use your normal filesystem backup tool after the process has exited. Retain the live database key separately in a password manager; the encrypted backup cannot be read without it. Older plaintext backups remain plaintext after the active database is migrated.
+
+Restore files only while every Observer process using that workspace is stopped. OS-store credentials are separate from a database backup. After rotating a persisted provider key in 0.2.0, downgrading to 0.1.0 requires registering the provider key again and updating the application's client token. Restoring an older SQLite backup cannot recover an OS credential entry removed by a later rotation. Session-only keys need registration after every restart.
 
 JSONL exports are useful portable application records. They are not a replacement for a complete database backup.
 
