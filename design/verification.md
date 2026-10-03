@@ -1,6 +1,36 @@
 # Verification
 
-## Current review: October 2, 2026
+## Current review: October 3, 2026 — Observer 0.2.0
+
+Aligned the website with the published [v0.2.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0), published October 3 at 01:24:44 UTC. The tag resolves to `55a6e47a6c2c134d2f45e712c9124ae333fc2856`. GitHub release metadata confirmed all six native packages and `SHA256SUMS`.
+
+The homepage, overview, install commands, package version and guides now cover 0.2.0. Connection guidance distinguishes registered bearer credentials from the workspace token used for an unauthenticated loopback model. It includes OpenRouter, local Laya, longer SDK timeouts, provider-reported USD cost, Score consistency warnings, history pagination, server-side group search, custom dates, definition-comparison limits, safe upgrades and credential downgrade behavior. Real-provider evidence stays separate from mock SDK verification. All three tour screenshots were recaptured from the checksum-verified published Linux ARM64 package using 720 synthetic demo requests; see [screenshot provenance](screenshots.md).
+
+### Public-repository assessment
+
+The repository is currently **private**. The code and content passed the public-review checks below, but the website needs its own license decision before being presented as open source. The application's MIT license and the homepage's application-license claim do not establish a license for this separate website repository.
+
+- **License decision outstanding:** no root `LICENSE`; GitHub reports `licenseInfo: null`. MIT would match the application if that is the owner's intended license. Retain the existing Geist font license files regardless of the choice. The npm `private: true` flag prevents package publication and is compatible with a public source repository.
+- **Secret scan passed:** checksum-verified Gitleaks 8.30.1 scanned all 11 pre-update commits with `--log-opts=--all`, and separately scanned an exported copy of all 69 current tracked files, excluding ignored dependencies, build output and local settings. Neither scan found a leak. This is a pattern scan, not a guarantee about every possible secret. No actual `.env`, credentials, databases, Vercel project metadata or dependency/build directories are tracked or present in the historical file list. Commit authors use a GitHub noreply address.
+- **Production dependency audit passed:** `npm audit --omit=dev` reports zero vulnerabilities. The full audit reports five high-severity affected development packages from one [braces stack-exhaustion advisory](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), through `micromatch` → `fast-glob` → Next's ESLint plugin/config. The npm registry's latest braces is still 3.0.3, inside the affected range. npm suggests a major Next ESLint-config downgrade, which is not a suitable automatic fix. Track a supported upstream fix; this dependency is used in lint tooling, not the site's production request path.
+- **Runtime scope:** the website has no provider credentials, Observer connection, database, visitor history import or backend mutations. Tour assets are actual synthetic-demo screenshots. It bundles local fonts and retains their license notices. Existing response headers constrain framing and browser capabilities; browser accessibility and interaction checks cover the published pages.
+- **CI:** the current remote `main` (`0dcb1ab`) passed [Website checks](https://github.com/LimePencil/jev-observer-web/actions/runs/37004920200). The workflow uses read-only repository permissions and runs install, lint, build, types and four browser projects on pull requests. `main` has no branch protection. Require its checks and review before accepting public contributions; SHA-pinning actions is useful additional hardening. This assessment does not change repository settings.
+- **Public metadata:** personal absolute workspace paths were removed from current design notes. Historical commits still contain nonsecret workspace/temp paths and previous private-repository observations; no history rewrite is needed on the evidence found. GitHub and Vercel service metadata are not part of the Git content scan.
+
+**Verdict:** technically suitable to make the source visible; the updated checks passed. Add an explicit website license before describing it as open source. Track the development-tool advisory and protect the default branch before accepting outside contributions. Visibility, licensing and hosted repository settings remain owner decisions.
+
+### Updated validation
+
+- `npm ci`, `npm run build`, `npm run lint`, `npm run typecheck`, `npm run format:check` and `git diff --check`: pass. Local runtime: Node.js 24.15.0; CI retains Node.js 22.
+- Full production-bundle browser suite with two workers: **196 passed, 4 expected skips, 0 failures** across Chromium desktop/mobile, Firefox desktop and mobile WebKit. Skips cover desktop exclusion of a mobile-only case and unsupported native clipboard grants; clipboard recovery runs in every browser.
+- After final troubleshooting/contribution prose corrections, rebuilt the final production bundle and reran every documentation page/internal-destination check across all four projects: **4 passed**.
+- All **46 internal documentation links and anchors** resolve. HTTP checks confirmed the built homepage, installer commands, local Laya flags/timeouts and dashboard guide reflect 0.2.0.
+- Screenshot capture checked published executable version, demo settings, 720 records, group versions and request review controls; **no browser errors or external requests**. All three captures were visually inspected.
+- Gitleaks scans and dependency audits have the results and limits recorded above. A broader scan of ignored build output separately flagged Next.js-generated preview signing/encryption keys and the server-action encryption key in `.next` manifests; those files are untracked and excluded from the source-publication verdict.
+
+These are website checks and a synthetic-demo capture, not a new live-provider or application load test. The application checkout and published release remain unchanged.
+
+## Previous review: October 2, 2026
 
 Compared the website with fetched application `main` at
 [`d3e4886`](https://github.com/LimePencil/jev-observer/commit/d3e4886955990087bda970f645756ae5b5d9ee3b)
@@ -175,7 +205,7 @@ Custom greenfield direction; variance 6, motion 5, density 3. One green accent, 
 
 ## Delivery
 
-Sibling project: `/home/limepencil/dev/jev-observer-web`.
+Project: `jev-observer-web` (a separate checkout from the application).
 Repository: `LimePencil/jev-observer-web`, verified private.
 Production: https://jev-observer-web.vercel.app. The Vercel project is connected to `main` and deploys pushed commits. The README contains both deployment and deployed-site verification instructions.
 

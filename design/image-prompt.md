@@ -3,7 +3,7 @@
 - Final asset: `public/images/observer-lens.webp`
 - Created: 2026-09-22
 - Generator: built-in `image_gen` tool (no input/reference images)
-- Original: `/home/limepencil/.codex/generated_images/01a0c7ed-7f11-7bb3-a38f-a5c1198a795d/exec-c9d16cbe-1b78-4d20-9dac-f0897bb09405.png`
+- Original: `exec-c9d16cbe-1b78-4d20-9dac-f0897bb09405.png (original generated PNG, kept outside this repository)`
 - Conversion: Sharp CLI, WebP quality 86, original 1536 × 1024 dimensions retained.
 - Review: one complete optical lens sculpture, clear and mint glass, charcoal rim, off-white studio backdrop, no lettering or UI; suitable as decorative supporting art.
 

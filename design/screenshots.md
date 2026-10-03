@@ -1,19 +1,19 @@
 # Dashboard screenshots
 
-Captured on 2026-10-02 from the official public Jev Observer v0.1.0 Linux release.
+Captured on 2026-10-03 from the official public Jev Observer v0.2.0 Linux ARM64 release.
 These are unmodified browser screenshots, not mockups or fabricated application
-views. They replace the September 22 captures from an earlier development binary
-that shared the same version string.
+views. They replace the October 2 captures from the public 0.1.0 release.
 
 ## Provenance
 
-- Application: [`v0.1.0` public release](https://github.com/LimePencil/jev-observer/releases/tag/v0.1.0),
-  package `jev-observer-v0.1.0-x86_64-unknown-linux-musl.tar.gz`, with its embedded UI.
-  Tag commit: `340fa9417718b6728c1d4124cb84676e440796a0`.
+- Application: [`v0.2.0` public release](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0),
+  package `jev-observer-v0.2.0-aarch64-unknown-linux-musl.tar.gz`, with its embedded UI.
+  Tag commit: `55a6e47a6c2c134d2f45e712c9124ae333fc2856`.
 - Downloaded the native package and `SHA256SUMS` using `gh release download`.
-  SHA-256 verified: `854b42b049705086cb3db88a7f6c4a86185dcc87ccf760f20ab8784cf6d62b46`.
-  The downloaded executable reported `jev-observer 0.1.0`.
-- Launch: `./jev-observer --demo --port 18765 --db /tmp/jev-observer-public-release.09TICK/observer.sqlite`.
+  SHA-256 verified: `92a414bda7a636d2c31149c5f78783b2c00c0f06d51578007128b74d2b907859`.
+  The downloaded executable reported `jev-observer 0.2.0`.
+  Executable SHA-256: `3365c10ce650c1419908669c980ff4fd4e183179357f3af5fca7d04ca98c44ce`.
+- Launch: `./jev-observer --demo --port 18766 --db /tmp/jev-observer-web-v020/capture.sqlite`.
 - Demo mode seeds 720 synthetic requests, disables forwarding, and uses a
   separate demo database. No provider calls or credentials were used.
 - Browser authentication: username `observer`, using the isolated demo token file
@@ -24,12 +24,12 @@ that shared the same version string.
 - The tour imports these images as bundled assets. Content hashes in their URLs
   prevent browsers and the image optimizer from reusing old development captures.
 - Assertions confirmed 720 sample requests, group definition versions, the request
-  review control, and authenticated settings reporting `demo: true`, `version: 0.1.0`.
+  review control, and authenticated settings reporting `demo: true`, `version: 0.2.0`.
   No page errors or external browser requests occurred.
-- The isolated capture process was terminated cleanly with `Ctrl-C` after capture.
+- The isolated capture process was terminated cleanly with `SIGINT` after capture.
   Existing processes and the application source checkout were left unchanged.
 - The capture script, package and raw captures remain outside the website at
-  `/tmp/jev-observer-public-release.09TICK/`.
+  `/tmp/jev-observer-web-v020/`.
 
 ## Images and truthful labels
 

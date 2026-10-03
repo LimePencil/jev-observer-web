@@ -9,31 +9,35 @@ The dashboard brings three views together: recurring questions, individual reque
 
 ## Select the history you need
 
-Filter by source, model and time window. Available windows are the last hour, last 24 hours, last seven days and all retained history. The default is 24 hours.
+Filter by source, model and time window. Available windows are the last hour, last 24 hours, last seven days and all retained history. The default is 24 hours. In 0.2.0, **Custom date range** also sets explicit start and end bounds. Filters are saved in the page's local URL so you can bookmark or share the same selection with another user of that workspace.
 
-The request search matches source names, request IDs and question keys. Press `Ctrl-K` (`⌘K` on macOS) to focus it when no details panel is open. Use the separate question-list search to find a displayed group. Select the failures filter when investigating unsuccessful requests.
+The request search matches source names, request IDs and question keys. Press `Ctrl-K` (`⌘K` on macOS) to focus it when no details panel is open. The separate question-list search queries all groups in the selected scope on the server; it does not change request totals. Select the failures filter when investigating unsuccessful requests.
 
-The request feed initially shows the latest 12 records; **Show latest** expands it to at most 100. The summary and activity chart cover the full selected history window. The question list is also limited to 100 groups, so its search only searches those listed groups. Use the shared request search or source filter to narrow the full history when a question is missing from the list.
+The request feed initially displays 12 records; **Show 100 records** expands a full page to at most 100. Use **Older requests** and **Newer requests** to traverse retained history, and the equivalent group controls to page through questions. The summary and activity chart cover the full selected scope rather than just the visible page. The timeline spans the selected range with at most 168 adaptive time buckets, including empty intervals.
 
 ## Read the summary
 
-| Metric                     | Meaning                                            |
-| -------------------------- | -------------------------------------------------- |
-| Requests                   | Recorded inference requests in the selected window |
-| Failures                   | Recorded requests with error statuses              |
-| Request latency            | Observed round-trip p50 and p95, when available    |
-| Reported tokens            | Available input and output token usage             |
-| Request cost or known cost | Sum of configured estimates with visible coverage  |
+| Metric                     | Meaning                                                   |
+| -------------------------- | --------------------------------------------------------- |
+| Requests                   | Recorded inference requests in the selected window        |
+| Failures                   | Recorded HTTP errors or failed response transfers         |
+| Request latency            | Observed round-trip p50 and p95, when available           |
+| Reported tokens            | Available input and output token usage                    |
+| Request cost or known cost | Reported USD costs or configured estimates, with coverage |
 
 A request can contain several answers. Usage and cost stay on that parent request so they are counted once. Imported application actions retain their own event kind and do not create extra inference charges.
 
-Unknown values remain unknown. A partial cost total means only some requests have enough information for an estimate. Sample-mode costs are explicitly synthetic.
+Unknown values remain unknown. A partial cost total means only some requests have usable reported costs or enough information for an estimate. Sample-mode costs are explicitly synthetic. A response transfer that fails after an upstream HTTP 200 still appears as a failure; capture-only gaps remain separate.
 
 ## Inspect recurring questions
 
 Select a question group to see its distribution and valid-answer count. Open the group details to inspect its activity, requests and separate definition versions.
 
 Choice questions show selected options. Score questions describe a value within their rubric. Noul questions describe a probability. Invalid or missing answers are excluded from valid distributions; a failed request is not interpreted as a negative Noul answer.
+
+Structurally valid Score values are preserved when their weighted displayed probabilities differ by more than 0.001; the dashboard shows a consistency warning. This does not repair the values or establish why they differ. Malformed distributions, missing answers and out-of-range scores remain invalid.
+
+Definition comparisons include outcome distributions, review coverage, request sample sizes, failures, warnings, latency, tokens and known-cost coverage. Histories with different inputs are not a controlled accuracy comparison. Check sample sizes and review coverage before interpreting a change.
 
 Observer groups using source, question key, full definition, presentation order and supplied task version. Changes to instructions or criteria keep distinct statistics. This helps you investigate a change without silently mixing incompatible questions.
 

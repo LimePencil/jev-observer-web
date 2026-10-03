@@ -53,7 +53,7 @@ npx --prefix ui playwright install chromium
 npm test --prefix ui
 ```
 
-The browser tests start Vite through Playwright configuration. They intercept API responses with explicit synthetic fixtures and cover interaction, accessibility, accounting presentation, pause/resume, import failures, downloads, review labels and mobile navigation. They are separate from Rust backend tests and SDK integration checks.
+The browser tests start Vite through Playwright configuration. They intercept API responses with explicit synthetic fixtures and cover interaction, accessibility, accounting presentation, pause/resume, import failures, downloads, review labels and mobile navigation. A separate production-bundle journey uses the actual executable to check connection registration, capture, review labels, imports, exports, pagination and retained history after a real process restart. These complement Rust backend tests and SDK integration checks.
 
 Rust tests cover model normalization, storage, grouping, proxy forwarding, recording pressure, origin checks, retention, exports and shutdown behavior. See the source tests alongside each module.
 
@@ -94,10 +94,10 @@ node scripts/benchmark.mjs \
 
 The harness uses a loopback mock and temporary database. Results identify the executable, workload, settings, counts and host. Do not run other builds or load tests concurrently when you need interpretable measurements.
 
-Read the [performance report](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md) before interpreting numbers. Historical results predate encrypted live history and are not current capacity claims. These checks measure a specific local workload, not provider capacity, a latency guarantee or every possible history shape.
+Read the [performance report](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md) before interpreting numbers. The 0.2.0 reports include encrypted mixed-payload, retained-history and overload-recovery checks with exact executable hashes. Older September results predate encryption and are preserved as historical evidence. These checks measure a specific local workload, not provider capacity, a latency guarantee or every possible history shape.
 
 ## Understand continuous integration
 
-The application workflow builds the dashboard before compiling Rust, runs formatting, Clippy, Rust, installer and browser checks, builds the release executable, and runs both pinned SDKs against a local mock. The separate [release workflow](https://github.com/LimePencil/jev-observer/blob/main/.github/workflows/release.yml) verifies all six native packages, including authenticated live/demo startup, before publication; Windows also runs PowerShell installation and upgrade checks.
+The application workflow builds the dashboard before compiling Rust, runs formatting, Clippy, Rust, installer and browser checks, builds the release executable, and runs both pinned SDKs against a local mock. Release verification also checks a checksum-verified published 0.1.0 baseline for upgrade, rollback and backup restoration, plus unsupported future-schema rejection. Metadata and release notes are checked before native builds. The separate [release workflow](https://github.com/LimePencil/jev-observer/blob/main/.github/workflows/release.yml) verifies all six native packages, including authenticated live/demo startup, before publication; Windows also runs PowerShell installation and upgrade checks.
 
 Use the [CI workflow](https://github.com/LimePencil/jev-observer/blob/main/.github/workflows/ci.yml) as the reproducible check sequence. For design boundaries and module ownership, continue to [architecture](/docs/architecture).
