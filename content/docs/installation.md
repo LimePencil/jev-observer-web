@@ -77,7 +77,7 @@ Windows custom database directories must restrict access to the current user, SY
 
 ## Prerequisites
 
-Only source builds need Git, the Rust toolchain pinned in `rust-toolchain.toml`, a native C compiler, and Node.js 22.12 or later with npm. Windows also needs Visual Studio C++ Build Tools, native Windows Perl and NASM. See [development](/docs/development).
+Only source builds need Git, the Rust toolchain pinned in `rust-toolchain.toml`, a native C compiler, and Node.js 22.12 or later with npm. Windows also needs Visual Studio C++ Build Tools, native Windows Perl and NASM. If Git Bash Perl is on `PATH`, set `$env:OPENSSL_SRC_PERL` to your native Perl executable. See [development](/docs/development).
 
 ## Build from source
 

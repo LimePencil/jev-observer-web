@@ -1,5 +1,15 @@
 # Verification
 
+## Current release review: October 18, 2026 — Observer 0.3.1
+
+Aligned the site with published `v0.3.1`, source commit `5501c265f53c06462f7785a6ef1f277d094427d1`, while preserving the public MIT license and protected-main policy. The homepage remains brief; release notes explain query improvements, Linux saved credentials and the extra startup time/disk space needed for new indexes.
+
+Installation commands, package version and source references now target 0.3.1. The real dashboard tour was recaptured from the checksum-verified published Linux executable; version, demo mode and 720 synthetic requests were confirmed with no browser errors or external requests. See [capture provenance](screenshots.md).
+
+An independent review checked all 25 versioned source/installer links and 45 local documentation links. Existing connection, privacy and rollback guidance remains applicable. The Windows native-Perl source-build workaround and the published local-Laya anchor are preserved.
+
+Build, lint, TypeScript, formatting and whitespace checks passed. The [release pull request](https://github.com/LimePencil/jev-observer-web/pull/2) records the final required `verify` check, including the complete browser/accessibility suite. Publication follows that checked PR through the existing Vercel integration.
+
 ## Local review: October 18, 2026 — Observer 0.3.0
 
 Aligned the website with the published [v0.3.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.0), tag commit `02eb5ba4bc237829502c30cf4606657329339353`. Later application `main` changes are outside this update. The application checkout was not modified.
