@@ -162,9 +162,7 @@ for (const theme of ["light", "dark"] as const) {
       .getByRole("button", { name: "Search documentation", exact: true })
       .click();
     const dialog = page.getByRole("dialog", { name: "Documentation search" });
-    await dialog
-      .getByRole("searchbox", { name: "Search documentation" })
-      .fill("request");
+    // An empty search exposes every guide, regardless of its wording.
     await expect(dialog.getByRole("link")).toHaveCount(getDocs().length);
 
     const dimensions = await page.evaluate(() =>
