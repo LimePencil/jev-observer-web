@@ -5,7 +5,7 @@ section: "User guide"
 order: 7
 ---
 
-Start with the process output and the dashboard's collection-health signal. A successful upstream response and a complete saved observation are separate facts. Commands below use the installed executable unless they explicitly rebuild from source; Windows users can use the executable path from [installation](/docs/installation).
+Start with process output and the dashboard's collection-health signal. A successful response and a complete saved observation are separate facts. Windows users can use the executable path from [installation](/docs/installation).
 
 ## The dashboard build is missing
 
@@ -49,11 +49,15 @@ Check these in order:
 
 1. Supply the saved database key and start normal mode, without `--demo`. Demo intentionally disables forwarding.
 2. Set the SDK base URL to the origin only. The tested SDKs append `/v1/systemone` themselves.
-3. In bearer mode, use the local client token from **Connect an application**, or a direct provider key with the workspace token in `x-observer-access`. For a loopback model with `--upstream-auth none`, use the workspace dashboard token as the SDK credential.
+3. Use a registered local client token, or a provider key plus `x-observer-access`. With `--upstream-auth none`, use the workspace token as the SDK credential.
 4. Verify the configured upstream endpoint and its availability.
 5. Confirm that your client uses the supported native System One route.
 
-If the system credential store is locked or unavailable, register the provider key with session-only storage. Remote upstreams require HTTPS. Observer adds no retries or redirects. Your SDK's error handling may expose an upstream error response. Other endpoints and untested provider dialects are outside the native forwarding scope. See the exact [SDK connection examples](/docs/connecting).
+If the system credential store is locked, use session-only storage. Remote upstreams require HTTPS; authentication-free upstreams must be loopback. Observer adds no retries or redirects. See [connection examples and provider setup](/docs/connecting).
+
+## Slow inference times out
+
+Increase the SDK timeout for local inference: Python uses seconds (`timeout=180`), JavaScript milliseconds (`timeout: 180000`). Observer allows 300 seconds for the full upload, inference and response transfer; change it with `--upstream-timeout-secs`. The shorter timeout wins. An Observer deadline before headers returns 504; during the body it ends the stream and records an incomplete transfer.
 
 ## Calls succeed but captures are incomplete
 
@@ -65,17 +69,21 @@ Use [capture-capacity settings](/docs/configuration#capture-capacity) to adjust 
 
 ## Requests are missing from history
 
-Check collection health for drops, queue pressure and writer failures. Capture slots cover active upstream calls as well as queued writes. Slow upstreams can exhaust slots even when the request rate is unchanged.
+Check collection health for drops, queue pressure and writer failures. Slow upstreams can exhaust capture slots, which cover active calls and queued writes. The latest storage failure shows its time, operation and sanitized category; it can remain visible after recovery.
 
-Check the active source, model, search and time filters, including custom date bounds. Summary counts cover the full selected scope; use **Older requests** and **Newer requests** to traverse feed pages. The group search covers all groups in the selected scope, with its own pagination. Finally, consider retention age and the record cap; old records may already have been removed.
+Check source, model, search and date filters, then page through the request list. Summary counts cover the full selected scope. Retention may already have removed older records. Request details show 50 answers per page; saved records and JSONL retain all answers.
 
 Health counters reset when the process restarts. Zero drops in a newly started process do not establish that retained history is complete.
 
 ## Cost or usage is unknown
 
-Unknown is intentional when no usable provider-reported USD cost is available and the provider did not supply usable usage, either estimate rate is missing, or a captured body could not be interpreted. Validated OpenRouter `usage.cost` takes precedence over configured estimates; undocumented cost fields from other providers are not assumed to be USD. Supply both input and output price rates to estimate cost for records with usable usage.
+OpenRouter's valid reported USD cost takes precedence over estimates. Other providers' `usage.cost` fields are not assumed to be USD. Without recognized reported cost, estimates need usable token usage and both configured rates.
 
-Check the cost-coverage denominator before comparing totals. Imported application actions are not inference requests and must not generate token charges. See [cost estimates](/docs/configuration#estimate-costs).
+Check cost coverage and separate input/output token coverage before comparing totals. Reported zero is known; absent usage stays unknown. Imported application actions do not create token charges. See [cost estimates](/docs/configuration#estimate-costs).
+
+## An answer has a validation warning
+
+Warnings preserve reported values; otherwise valid answers can still count in distributions. Malformed answers remain invalid. Current validation applies to new captures and imports; upgrading does not reclassify saved history. See [model-specific interpretation](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/models.md#compatible-http-servers).
 
 ## A recurring question appears in separate groups
 
@@ -85,17 +93,17 @@ If rules are carried in input state, add a meaningful `x-observer-task-version`.
 
 ## Dashboard refresh feels slow
 
-Whole-window summaries get more expensive as retained history grows. Narrow the source or time window and inspect the database's size and host load. A refresh waits for the current snapshot before scheduling the next one.
+Narrow the source or date range and check host load. Dashboard reads allow 45 seconds and show slow-query feedback after five seconds; broad histories can still exceed that deadline. A refresh waits for the current snapshot before starting another.
 
-Pausing the visible dashboard or opening details intentionally holds the view while collection continues. The 0.2.0 measurements include encrypted mixed-load and large-history checks. Their recorded workloads and shared-host timings do not promise one-second freshness at every history size; older September measurements predate encryption.
+Pausing or opening details holds the view while collection continues. Question-group comparison metrics load when you open the group. Performance depends on workload and retained history; the timeout is not a latency guarantee.
 
-See [measured performance and limits](https://github.com/LimePencil/jev-observer/blob/main/docs/performance.md).
+See [release performance limits](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/releases/0.3.1.md#performance-and-upgrade-notes).
 
 ## An import fails
 
-Choose the format that matches the file, then check valid JSON/JSONL structure. Imports support Observer exports and the reviewed JevRouter receipt format. Limit each batch to 10,000 records and 8 MiB of UTF-8 file or pasted text. The API permits JSON wrapper and escaping overhead separately.
+Choose the matching format: Observer JSONL, JevRouter receipt or System One capture. Limit each batch to 10,000 records and 8 MiB of UTF-8 text. Normalization has additional per-record and per-batch limits: 413 means excessive size or work; 400 means malformed or excessively nested input. Neither saves a partial batch.
 
-Only one import runs at a time. A duplicate count can mean records with the same explicit source event IDs were already imported. See [import records](/docs/data-and-privacy#import-records).
+Split larger files between complete JSONL lines; splitting cannot fix an oversized individual record. Only one import runs at a time. Duplicate counts mean matching event IDs were already imported. See [import records](/docs/data-and-privacy#import-records).
 
 ## A local API call returns 403
 
@@ -104,17 +112,3 @@ Use the loopback URL with the configured port. Browser origins must match the lo
 API calls also require HTTP Basic authentication as described above. A proxy call using a provider key directly or the process fallback needs the workspace token in `x-observer-access`; fallback additionally requires `application/json`. Registered local client tokens need no additional access header.
 
 For custom integrations, see [the local API](/docs/architecture#local-api). The frontend development server already has a narrowly scoped API proxy configured for local development.
-
-## Local Laya calls fail or time out
-
-Start Laya separately on loopback and configure Observer with `--upstream http://127.0.0.1:8000/v1/systemone --upstream-auth none --provider laya` when the model server requires no provider key. Use the workspace dashboard token as the SDK credential; no provider-key registration is needed. Observer still requires its saved database key for live history.
-
-Use model `english` for the reviewed English checkpoint. CPU inference can exceed the SDKs' default ten seconds; set Python `timeout=180` or JavaScript `timeout: 180000` and tune for your machine. If Laya requires a key, keep bearer mode, register that key and use the returned local client token instead. See [local Laya setup](/docs/connecting#local-laya-models).
-
-## A Score has a consistency warning
-
-Observer 0.2.0 preserves structurally valid Score values when they differ from weighted displayed probabilities by more than 0.001. The warning keeps both original fields inspectable; it does not establish why they differ. Malformed distributions and out-of-range scores still fail validation and stay out of valid distributions.
-
-## A saved key stops working after downgrade
-
-After saving or rotating an OS-store provider key in 0.2.0, Observer 0.1.0 cannot read the newer credential entry. Register the provider key again in the older version and update your application's local client token. A SQLite backup does not restore a removed operating-system credential entry. See [upgrade and rollback guidance](/docs/installation#update-an-existing-build).

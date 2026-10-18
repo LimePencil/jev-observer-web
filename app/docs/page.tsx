@@ -37,8 +37,8 @@ export default function DocsHome() {
       <div className="doc-breadcrumb">Jev Observer / Docs</div>
       <h1>Documentation</h1>
       <p className="doc-lead">
-        A clearer view starts here. Set up Observer, make sense of your
-        requests, or get into the code.
+        Set up Observer {site.version}, explore your history, or contribute to
+        the project.
       </p>
       <Link href="/docs/installation" className="docs-start">
         <TerminalWindow size={28} />

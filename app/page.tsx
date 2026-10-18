@@ -27,7 +27,11 @@ export default function Home() {
     <main id="main">
       <section className="hero container" aria-labelledby="hero-title">
         <div className="hero-copy">
-          <p className="eyebrow hero-enter">Local observability for Jev</p>
+          <p className="eyebrow hero-enter">
+            <Link href="/docs/release-notes">
+              Local observability · v{site.version}
+            </Link>
+          </p>
           <h1 id="hero-title" className="hero-enter">
             Every decision. <br />
             <span>In clear view.</span>
@@ -113,7 +117,7 @@ export default function Home() {
               <ArrowRight className="flow-arrow" size={23} />
               <div className="flow-node">
                 <BracketsCurly size={25} />
-                <strong>Your provider</strong>
+                <strong>Your model provider</strong>
                 <span>Live inference</span>
               </div>
             </div>
@@ -191,8 +195,8 @@ export default function Home() {
             <GitBranch size={23} />
             <p>
               <strong>MIT licensed. Still taking shape.</strong> A working
-              prototype. Version 0.2.0 supports Jev through OpenRouter and local
-              Laya models, with native packages for Linux, macOS and Windows.
+              prototype for Jev and local Laya models, with native packages for
+              Linux, macOS and Windows.
             </p>
             <a
               href={site.repo}

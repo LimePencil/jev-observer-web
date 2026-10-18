@@ -1,79 +1,68 @@
 ---
 title: "Configuration"
-description: "Set the listener, retention, capture capacity, privacy options and explicit cost estimates."
+description: "Set the upstream, retention, capture limits and cost estimates."
 section: "User guide"
 order: 6
 ---
 
-Observer is configured through startup flags. The dashboard's Settings view shows the active configuration; it does not replace the command line. Commands below use the installed executable; for a source build, replace `jev-observer` with `./target/release/jev-observer`. On Windows, use the executable path from [installation](/docs/installation).
-
-```bash
-jev-observer --help
-```
+Configure Observer with startup flags. **Settings** shows the active configuration; changing it requires restarting Observer. Run `jev-observer --help` for the full CLI reference.
 
 ## Listener and history
 
-| Option             | Default                                | Purpose                                              |
-| ------------------ | -------------------------------------- | ---------------------------------------------------- |
-| `--port`           | `8765`                                 | Port on `127.0.0.1`                                  |
-| `--db`             | `.jev-observer/observer.sqlite`        | SQLite file path                                     |
-| `--upstream`       | `https://api.typesafe.ai/v1/systemone` | Fixed upstream endpoint                              |
-| `--upstream-auth`  | `bearer`                               | Provider credentials, or `none` for a loopback model |
-| `--provider`       | Inferred from upstream hostname        | Recorded provider label; `laya` selects its adapter  |
-| `--retention-days` | `7`                                    | Maximum record age                                   |
-| `--max-records`    | `1000000`                              | Soft retained-record cap                             |
-| `--demo`           | Disabled                               | Isolated synthetic history with forwarding disabled  |
+| Option                    | Default                                | Purpose                                                           |
+| ------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
+| `--port`                  | `8765`                                 | Port on `127.0.0.1`                                               |
+| `--db`                    | `.jev-observer/observer.sqlite`        | History location                                                  |
+| `--upstream`              | `https://api.typesafe.ai/v1/systemone` | One fixed upstream endpoint                                       |
+| `--upstream-auth`         | `bearer`                               | Use `none` only for a loopback server without a provider key      |
+| `--upstream-timeout-secs` | `300`                                  | Total upload, inference and response deadline; 1–86,400 seconds   |
+| `--provider`              | Inferred from known hosts              | Provider attribution and validation profile; set for local models |
+| `--retention-days`        | `7`                                    | Maximum record age                                                |
+| `--max-records`           | `1000000`                              | Soft retained-record cap                                          |
+| `--demo`                  | Disabled                               | Separate synthetic history; forwarding disabled                   |
 
-There is no configurable public bind address. Relative database paths are resolved from the directory where you start Observer. Demo mode uses a separate `*.demo.sqlite` sibling file.
+Observer binds only to IPv4 loopback. Relative database paths resolve from the startup directory. Demo uses a separate `*.demo.sqlite` file.
 
-The upstream must be an absolute HTTPS URL for remote providers; HTTP is accepted only for loopback servers. Credentials, query parameters and fragments are rejected. If you supply an origin with only `/` as its path, Observer uses `/v1/systemone`.
+Remote upstreams require HTTPS; HTTP is accepted on loopback for local models and mocks. URLs cannot contain credentials, query parameters or fragments. An origin without a path uses `/v1/systemone`. See [connection examples](/docs/connecting).
 
-`--upstream-auth none` requires a loopback endpoint. It disables provider authentication while still requiring the workspace access token for callers, and ignores `TYPESAFE_API_KEY`. Use [local Laya setup](/docs/connecting#local-laya-models) for matching SDK credentials and timeouts. Provider labels contain 1 to 64 letters, digits, dots, hyphens or underscores and are normalized to lowercase. OpenRouter is recognized automatically from its upstream hostname.
-
-Retention settings must be positive. Maintenance runs every 30 seconds, so the record cap is soft and does not bound allocated disk bytes.
+Retention values must be positive. Cleanup runs every 30 seconds; these are record and age limits, not disk-byte limits.
 
 ## Credentials and privacy
 
-| Option                                     | Default       | Purpose                                                                              |
-| ------------------------------------------ | ------------- | ------------------------------------------------------------------------------------ |
-| `JEV_OBSERVER_DB_KEY` environment variable | Unset         | Required 64-character hexadecimal key for encrypted live history; not needed in demo |
-| `TYPESAFE_API_KEY` environment variable    | Unset         | Optional fallback credential for upstream forwarding                                 |
-| `--capture-state`                          | Disabled      | Retain raw input state                                                               |
-| `--redact-key KEY`                         | No extra keys | Add a field name to stored-data redaction; repeat as needed                          |
+| Setting               | Purpose                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| `JEV_OBSERVER_DB_KEY` | Required saved 64-character hexadecimal key for live history |
+| `TYPESAFE_API_KEY`    | Optional fallback provider credential in bearer mode         |
+| `--capture-state`     | Opt in to retaining input state and envelope media fields    |
+| `--redact-key KEY`    | Add a field name to redaction; repeat as needed              |
 
-Live startup requires the same saved database key for the selected database. Supply it through the environment, never a command-line argument. The dashboard requires username `observer` and the workspace access token whose path is printed at startup.
+Supply the database key through the environment. Sign in with username `observer` and the workspace access token printed by path at startup.
 
-Register a provider key in **Connect an application** and use the generated local client token in your SDK, or use a provider key directly with `x-observer-access` containing the dashboard token. Caller authorization takes precedence over the fallback environment variable. Fallback requests also require the access token and `application/json`. See [connection setup](/docs/connecting) for complete examples.
+For bearer mode, register a provider key in **Connect an application** and use its local client token in your SDK. For `--upstream-auth none`, authenticate locally with the workspace token; no authorization is sent upstream. [Complete credential setup](/docs/connecting).
 
-For `--upstream-auth none`, use the dashboard access token as the SDK credential without provider-key registration. The connection panel shows the selected provider, endpoint and authentication mode.
-
-Definitions, answers and supported extensions are retained even when state capture is disabled. See [data and privacy](/docs/data-and-privacy) for the limits of redaction and local storage.
+Definitions and answers are retained even with input capture off. See [data and privacy](/docs/data-and-privacy).
 
 ## Capture capacity
 
-| Option             | Default                 | Accepted range        |
-| ------------------ | ----------------------- | --------------------- |
-| `--capture-limit`  | `262144` bytes per body | 1 to 16,777,216 bytes |
-| `--capture-slots`  | `1024`                  | 1 to 4,096            |
-| `--queue-capacity` | `1024`                  | 1 to 4,096            |
+| Option             | Default                 | Range        |
+| ------------------ | ----------------------- | ------------ |
+| `--capture-limit`  | `262144` bytes per body | 1–16,777,216 |
+| `--capture-slots`  | `1024`                  | 1–4,096      |
+| `--queue-capacity` | `1024`                  | 1–4,096      |
 
-The capture limit applies separately to a request body and response body. A capture slot stays reserved across an active request, the pending queue, normalization and persistence. The body budget must satisfy:
+A slot covers an active call through queued writing and persistence. The configured body budget must satisfy:
 
 ```text
 2 × capture slots × capture limit <= 512 MiB
 ```
 
-This budget excludes HTTP buffers and parsed-record overhead. Capture buffers grow on demand. The default settings reach the allowed configured body budget, so increasing slots requires reducing the per-body limit.
+Defaults reach that budget, so increasing slots requires a smaller per-body limit. Buffers grow on demand; HTTP buffers and parsed-record overhead are additional.
 
-Size slots for concurrent calls plus queued writes. For example, 500 requests per second with a one-second upstream needs more than 500 slots. Slower calls can need more concurrent slots even at the same request rate.
-
-Full bodies can forward while their saved observations are truncated. If the capture budget or pending queue is full, observation work is dropped and counted in collection health. Forwarding does not deliberately wait for a capture reservation.
+Size slots for concurrent calls plus queued writes. Full bodies can still forward when their saved captures are truncated. Full capture slots or queues drop observation work and report it in collection health.
 
 ## Estimate costs
 
-Version 0.2.0 records validated OpenRouter `usage.cost` as provider-reported USD. This takes precedence over estimates and retains its cost basis in history and exports. Other providers' undocumented cost fields remain extensions and are not assumed to be USD.
-
-Provide both an input and output rate in USD per million tokens. Use rates appropriate for your own provider and model arrangement.
+OpenRouter-reported USD cost takes precedence over estimates. For estimates, provide both rates; usable input and output token counts are also required:
 
 ```bash
 jev-observer \
@@ -81,20 +70,18 @@ jev-observer \
   --output-price-per-million 2.00
 ```
 
-These numbers are illustrative arithmetic, not TypeSafe pricing. Each rate must be finite and nonnegative. A free output rate can be expressed as `0`.
+These are illustrative USD rates per million tokens, not provider pricing. Rates must be finite and nonnegative; `0` is allowed. Missing information stays unknown. Each request is charged to the displayed total once, with coverage shown for partial totals.
 
-An estimate needs both rates and usable token counts. Missing inputs remain unknown rather than becoming a zero cost. Cost is attached once to the parent request, even when that request contains several answers. The dashboard displays known-cost coverage and distinguishes reported costs from configured estimates.
-
-Observer does not maintain an automatic provider price list or calculate an invoice. Synthetic sample costs are labeled separately.
+Observer does not maintain a price list or calculate invoices. Changing rates does not recalculate saved records; synthetic sample costs remain labeled separately.
 
 ## Check effective settings
 
-Open **Settings** in the dashboard, or read the local API:
+Open **Settings**, or use the authenticated local API:
 
 ```bash
 curl --user observer http://127.0.0.1:8765/api/settings
 ```
 
-Curl prompts for the workspace access token as the password, keeping it out of the command line. The response contains public configuration and the application version. Credentials are excluded. Independent collection health is available at `/api/health` and also requires authentication.
+Curl prompts for the workspace token. The response excludes secrets and includes the version, configuration and offline model catalog. `/api/health` reports collection health with the same authentication.
 
-Source: [CLI implementation and validation](https://github.com/LimePencil/jev-observer/blob/main/src/config.rs).
+[Full CLI reference](https://github.com/LimePencil/jev-observer/blob/v0.3.1/src/config.rs).
