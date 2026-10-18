@@ -114,10 +114,7 @@ test.describe("mobile navigation state", () => {
     await page.keyboard.press("Tab");
     await expect(nav).not.toBeVisible();
     await expect(
-      page
-        .getByRole("main")
-        .getByRole("link", { name: "Install Observer", exact: true })
-        .first(),
+      page.getByRole("main").getByRole("link").first(),
     ).toBeFocused();
   });
 

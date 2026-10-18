@@ -53,13 +53,13 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
-The website and application repositories are public and MIT-licensed. Version 0.2.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
+The website and application repositories are public and MIT-licensed. Version 0.3.1 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
 The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
 
-The latest alignment review on October 3, 2026 checked the published [v0.2.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0), whose tag resolves to [`55a6e47`](https://github.com/LimePencil/jev-observer/commit/55a6e47a6c2c134d2f45e712c9124ae333fc2856). It includes all six native packages. Guides cover local Laya authentication and SDK timeouts, OpenRouter-reported cost, Score consistency warnings, history pagination, group search, date ranges, comparison limits and credential downgrade behavior. Tour screenshots come from the checksum-verified 0.2.0 Linux ARM64 package using synthetic demo data.
+The latest alignment review on October 18, 2026 checked the published [v0.3.1 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.1) at [`5501c26`](https://github.com/LimePencil/jev-observer/commit/5501c265f53c06462f7785a6ef1f277d094427d1). Guides and screenshots target that release, not later changes on application `main`. Keep the homepage concise and link detailed contracts and validation evidence to the application repository.
 
-Import limits apply to decoded UTF-8 text (8 MiB and 10,000 records), with JSON transport overhead allowed separately. Dashboard documentation preserves the difference between pausing visible updates and continuing collection. See [verification](design/verification.md) for current checks and the public-repository assessment.
+Release updates should recheck installers, connection/authentication modes, import privacy and limits, history navigation, cost semantics and screenshot provenance. Preserve the difference between pausing visible updates and continuing collection. See `design/verification.md` for the checks performed.
 
 ## Scope
 

@@ -8,6 +8,7 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
+import { site } from "@/lib/site";
 import overviewImage from "@/public/images/observer-metrics.png";
 import questionsImage from "@/public/images/observer-questions.png";
 import requestImage from "@/public/images/observer-live.png";
@@ -18,7 +19,7 @@ const views = [
     icon: ChartLine,
     image: overviewImage,
     description: "Latency, usage, and failures. One shared history.",
-    alt: "Jev Observer overview showing synthetic sample requests, latency metrics, question groups, and recent requests.",
+    alt: "Jev Observer overview showing synthetic sample requests, latency metrics, known token coverage, question groups, and recent requests.",
   },
   {
     id: "questions",
@@ -122,7 +123,7 @@ export function ProductTour() {
       ))}
       <div className="tour-caption">
         <p aria-live="polite">{view.description}</p>
-        <span>Real dashboard. Synthetic sample data.</span>
+        <span>Observer {site.version}. Synthetic sample data.</span>
       </div>
       <dialog
         ref={dialog}

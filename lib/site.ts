@@ -1,5 +1,6 @@
 export const site = {
   name: "Jev Observer",
+  version: "0.3.1",
   description:
     "See the decisions behind your Jev requests. A local proxy and dashboard for Jev and local Laya models, with questions, failures, latency, usage, and reported or estimated cost.",
   repo: "https://github.com/LimePencil/jev-observer",

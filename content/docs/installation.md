@@ -1,19 +1,19 @@
 ---
 title: "Install and run"
-description: "Install the native executable, sign in to the sample, then connect your application."
+description: "Install the native executable, try the sample, then connect your application."
 section: "Getting started"
 order: 2
 ---
 
-Jev Observer 0.2.0 runs as one executable with its dashboard, fonts and SQLite included. Prebuilt releases need no Rust, Node.js, database server or administrator access. The [application source](https://github.com/LimePencil/jev-observer) and [release downloads](https://github.com/LimePencil/jev-observer/releases/tag/v0.2.0) are public.
+Jev Observer **0.3.1** includes its dashboard, fonts and SQLite. Prebuilt releases need no Rust, Node.js, database server or administrator access.
 
 ## Install a release
 
 Linux and macOS:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/LimePencil/jev-observer/main/install.sh -o install.sh
-sh install.sh --version 0.2.0
+curl -fsSL https://raw.githubusercontent.com/LimePencil/jev-observer/v0.3.1/install.sh -o install.sh
+sh install.sh --version 0.3.1
 export PATH="$HOME/.local/bin:$PATH"
 jev-observer --demo
 ```
@@ -21,53 +21,49 @@ jev-observer --demo
 Windows PowerShell:
 
 ```powershell
-Invoke-WebRequest https://raw.githubusercontent.com/LimePencil/jev-observer/main/install.ps1 -OutFile install.ps1
-.\install.ps1 -Version 0.2.0
+Invoke-WebRequest https://raw.githubusercontent.com/LimePencil/jev-observer/v0.3.1/install.ps1 -OutFile install.ps1
+.\install.ps1 -Version 0.3.1
 & "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe" --demo
 ```
 
-The installers detect the native OS and CPU, verify the archive's SHA-256 checksum and executable version, then install into `~/.local/bin` on Unix or `%LOCALAPPDATA%\JevObserver\bin` on Windows. They do not edit shell profiles or start a background service. Downloads need no GitHub account. For private forks, see the application's [authenticated installation instructions](https://github.com/LimePencil/jev-observer/blob/main/docs/installation.md#private-repository-access).
+The installers verify the package checksum and executable version. They install into `~/.local/bin` on Unix or `%LOCALAPPDATA%\JevObserver\bin` on Windows without changing shell profiles or starting a service.
 
-If Windows policy blocks scripts, follow your organization's policy or extract the matching release ZIP and run `jev-observer.exe` directly.
+You can also [download and extract a package](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.1) directly. If Windows blocks scripts, follow your organization's policy or use the ZIP's `jev-observer.exe`.
 
 ## Supported packages
 
 | Platform | Architectures         | Package                           |
 | -------- | --------------------- | --------------------------------- |
 | Linux    | x86-64 / ARM64        | Static musl executable, `.tar.gz` |
-| macOS    | Intel / Apple silicon | Native executable, `.tar.gz`      |
-| Windows  | x86-64 / ARM64        | Native MSVC executable, `.zip`    |
+| macOS    | Intel / Apple silicon | `.tar.gz`                         |
+| Windows  | x86-64 / ARM64        | `.zip`                            |
 
-All six native packages must pass release verification before publication. Each release includes `SHA256SUMS`. macOS and Windows executables are unsigned and not notarized; OS security policies may block them. Checksums verify downloaded-byte consistency, not publisher identity. WSL2 uses the Linux package and has not been separately tested. See the [platform details](https://github.com/LimePencil/jev-observer/blob/main/docs/installation.md#supported-packages) for tested operating systems and runtime requirements.
+All six packages pass native release checks. The release also includes `SHA256SUMS`. macOS and Windows binaries are unsigned; OS policies may block them. Checksums verify downloaded bytes, not publisher identity. WSL2 uses the Linux package and has not been separately tested. [Platform requirements](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/installation.md#supported-packages).
 
 ## Open the sample
 
-The install commands above start `--demo`. To start it again, run `jev-observer --demo` on Unix or the installed executable's full path on Windows.
-
-Open [http://127.0.0.1:8765](http://127.0.0.1:8765), then sign in with:
+Open [http://127.0.0.1:8765](http://127.0.0.1:8765) and sign in:
 
 - **Username:** `observer`
 - **Password:** the token in `.jev-observer/observer.demo.access-token`
 
-Observer prints the exact token-file path at startup, including with a custom database path. Leave Observer running and open that file in another terminal or your text editor to copy its value into the browser password prompt. The token is the dashboard password; a provider API key is not needed for the sample.
+Startup output gives the exact token-file path. Leave Observer running while you copy the token into the browser's password prompt.
 
-The sample contains 720 synthetic requests with Choice, Score and Noul questions, changed definitions and failures. It needs no provider credentials or database key and disables upstream forwarding. After signing in, select **Question groups**, open a group to compare definitions, then inspect a request and its typed answers. Follow [the dashboard guide](/docs/dashboard) for filters, labels and collection health.
+The sample contains 720 synthetic requests and works offline. It needs no provider credentials or database key and disables forwarding. Try **Question groups**, then open a request to inspect its answers. Press `Ctrl-C` to stop.
 
-Demo uses a separate plaintext `*.demo.sqlite` database, including for any records you import while in demo mode. Use [live mode](/docs/connecting) for encrypted imported history. Existing nonempty history is kept across restarts rather than reseeded. The dashboard, fonts and charts work offline. Press `Ctrl-C` to stop Observer.
+Demo uses a separate plaintext `*.demo.sqlite` database, including any records you import. Nonempty history is kept across restarts. Use [live mode](/docs/connecting) for encrypted history.
 
 ## Start normal collection
 
-Stop the sample with `Ctrl-C` first. Live history requires a saved 32-byte database key. [Generate and save that key](/docs/connecting#save-a-database-key), supply it as `JEV_OBSERVER_DB_KEY` on every live startup, then start without `--demo`:
+Stop the sample first. [Generate and save a database key](/docs/connecting#save-a-database-key), supply it as `JEV_OBSERVER_DB_KEY`, then run:
 
 ```bash
 jev-observer
 ```
 
-On Windows, run `& "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe"` after setting the key in PowerShell as described in the connection guide.
+On Windows, use `& "$env:LOCALAPPDATA\JevObserver\bin\jev-observer.exe"`.
 
-Sign in at the same local address with username `observer` and the token in `.jev-observer/observer.access-token`. Normal history uses `.jev-observer/observer.sqlite`, relative to the directory where you start Observer, and is encrypted with SQLCipher. Keep the database key safe: losing it makes encrypted history unreadable.
-
-The dashboard starts empty until you [connect an application](/docs/connecting) or [import records](/docs/data-and-privacy#import-records). Keep Observer running while applications use its local URL.
+Sign in at the same address using `observer` and the live token in `.jev-observer/observer.access-token`. [Connect an application](/docs/connecting) or [import records](/docs/data-and-privacy#import-records) to populate the dashboard. Keep the database key: losing it makes encrypted history unreadable.
 
 ## Choose a port or database
 
@@ -75,32 +71,20 @@ The dashboard starts empty until you [connect an application](/docs/connecting) 
 jev-observer --port 8770 --db ./observer-data/history.sqlite
 ```
 
-Supply the same saved database key for this database on each live startup. Open `http://127.0.0.1:8770` and use that origin in your SDK. Demo with this path uses `./observer-data/history.demo.sqlite` and a separate token file; startup output gives the exact path.
+Use `http://127.0.0.1:8770` in the browser and SDK. Relative database paths resolve from your startup directory; supply the same saved key for that database. Demo uses a separate `history.demo.sqlite` and token file.
 
-On Windows, custom database directories must already restrict access to the current user, SYSTEM and administrators. Shared directories and reparse points are rejected. The default `.jev-observer` directory receives a private current-user ACL.
-
-Run `jev-observer --help` for CLI help. See [configuration](/docs/configuration) for capture, retention and cost settings.
+Windows custom database directories must restrict access to the current user, SYSTEM and administrators. The default `.jev-observer` directory receives a private ACL automatically.
 
 ## Prerequisites
 
-Only source builds need the following tools:
-
-| Tool              | Requirement                                |
-| ----------------- | ------------------------------------------ |
-| Git               | To clone the public source repository      |
-| Rust              | A recent stable toolchain, including Cargo |
-| Native C compiler | To compile bundled SQLite and OpenSSL      |
-| Node.js           | Version 22.12 or later                     |
-| npm               | To install and build the dashboard         |
-
-Windows source builds use MSVC and require Visual Studio C++ Build Tools, native Windows Perl (such as Strawberry Perl) and NASM for bundled OpenSSL. If Git Bash Perl is on `PATH`, set `$env:OPENSSL_SRC_PERL` to your native Perl executable before building.
+Only source builds need Git, the Rust toolchain pinned in `rust-toolchain.toml`, a native C compiler, and Node.js 22.12 or later with npm. Windows also needs Visual Studio C++ Build Tools, native Windows Perl and NASM. If Git Bash Perl is on `PATH`, set `$env:OPENSSL_SRC_PERL` to your native Perl executable. See [development](/docs/development).
 
 ## Build from source
 
 Build the dashboard before Rust so its assets are embedded:
 
 ```bash
-git clone https://github.com/LimePencil/jev-observer.git
+git clone --branch v0.3.1 https://github.com/LimePencil/jev-observer.git
 cd jev-observer
 npm ci --prefix ui
 npm run build --prefix ui
@@ -108,16 +92,14 @@ cargo build --release --locked
 ./target/release/jev-observer --demo
 ```
 
-In PowerShell, run `npm` and `cargo` as above, then `.\target\release\jev-observer.exe --demo`. Sign in with the demo token as described above. For source builds, replace `jev-observer` in other examples with the executable's build path.
+In PowerShell, run `.\target\release\jev-observer.exe --demo`. Replace `jev-observer` in other examples with this build path.
 
 ## Update an existing build
 
-Stop Observer cleanly before upgrading to 0.2.0. Back up the database, any remaining SQLite sidecars and the workspace dashboard-token file. Keep access to the saved `JEV_OBSERVER_DB_KEY` and retain the previous executable if you need to test rollback.
+Stop Observer, then [back up the database and SQLite sidecars](/docs/data-and-privacy#back-up-the-database), workspace access-token file and saved database key. Keep the previous executable if rollback matters.
 
-Rerun the installer with `--version 0.2.0` on Unix or `-Version 0.2.0` in PowerShell. Omit the version option to select the latest published release. Failed downloads or verification preserve the installed executable. Installation does not move or migrate history; the new executable upgrades supported query indexes on startup. Unsupported database schemas are rejected before encryption or other rewriting.
+Rerun the installer for 0.3.1. Failed downloads or verification preserve the installed executable. Installation does not change history; starting the new executable can update supported query indexes or migrate legacy plaintext history.
 
-Version 0.2.0 reads provider credentials saved by 0.1.0. After saving or rotating a persisted provider key in 0.2.0, the new credential-store entry cannot be read by 0.1.0. If you downgrade, re-register the provider key and update the application's local client token. Restoring only an older SQLite backup cannot restore an OS credential entry removed by a later rotation. Session-only credentials need registration after every restart.
+First startup creates new query indexes automatically. Large histories need extra startup time and disk space, including temporary index-building files. Existing tables remain readable by older versions; saved-credential identities are unchanged. If you downgrade to 0.1.0 after saving or rotating a provider key in 0.2.0 or later, register that key again and update the application's local client token. Restoring SQLite alone does not restore an OS credential-store entry.
 
-For source builds, rebuild the dashboard and executable using the same sequence. Restore a [complete filesystem backup](/docs/data-and-privacy#back-up-the-database) only while every Observer process using that workspace is stopped. Keep the database key separately: it is not the provider key.
-
-See the [0.2.0 release notes](https://github.com/LimePencil/jev-observer/blob/v0.2.0/docs/releases/0.2.0.md) for the verified changes and limits.
+See the [full backup and rollback guide](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/installation.md#history-backups-and-downgrades) or [troubleshooting](/docs/troubleshooting).

@@ -1,5 +1,38 @@
 # Verification
 
+## Current release review: October 18, 2026 — Observer 0.3.1
+
+Aligned the site with published `v0.3.1`, source commit `5501c265f53c06462f7785a6ef1f277d094427d1`, while preserving the public MIT license and protected-main policy. The homepage remains brief; release notes explain query improvements, Linux saved credentials and the extra startup time/disk space needed for new indexes.
+
+Installation commands, package version and source references now target 0.3.1. The real dashboard tour was recaptured from the checksum-verified published Linux executable; version, demo mode and 720 synthetic requests were confirmed with no browser errors or external requests. See [capture provenance](screenshots.md).
+
+An independent review checked all 25 versioned source/installer links and 45 local documentation links. Existing connection, privacy and rollback guidance remains applicable. The Windows native-Perl source-build workaround and the published local-Laya anchor are preserved.
+
+Build, lint, TypeScript, formatting and whitespace checks passed. The [release pull request](https://github.com/LimePencil/jev-observer-web/pull/2) records the final required `verify` check, including the complete browser/accessibility suite. Publication follows that checked PR through the existing Vercel integration.
+
+## Local review: October 18, 2026 — Observer 0.3.0
+
+Aligned the website with the published [v0.3.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.0), tag commit `02eb5ba4bc237829502c30cf4606657329339353`. Later application `main` changes are outside this update. The application checkout was not modified.
+
+### Changes
+
+- Kept the homepage concise, adding a release-notes link and current version. The docs index and tour caption identify 0.3.0.
+- Replaced all three tour images with captures from the checksum-verified published executable; see [screenshot provenance](screenshots.md).
+- Updated installation and rollback, OpenRouter and Laya connections, cost attribution, paginated history, reviews, import privacy and developer setup. Versioned source links preserve the release baseline.
+- Shortened the guides by about 16% overall, including the new release notes. Detailed contracts and validation evidence remain linked in the application repository.
+- Updated the keyboard-navigation regression to expect the first link in main content, which is now the release link.
+
+### Review evidence
+
+- Build, ESLint, TypeScript, Prettier and whitespace checks passed.
+- All **196 applicable browser cases** were verified across desktop/mobile Chromium, desktop Firefox and mobile WebKit; four platform-specific cases are intentionally skipped. The full run finished with 193 passes and three failures from the old hard-coded installation-link focus expectation. After updating that expectation for the release link, the affected test passed in all four projects in a targeted rerun. No application behavior fix was needed.
+- Browser coverage includes all documentation routes and anchors, clipboard success/recovery, theme persistence, reduced motion, dialogs, search and 24 axe accessibility checks.
+- Independently checked all 24 versioned source/installer links and 48 local documentation links against the release tag and current guides.
+- Visual browser review covered home, release notes and installation at 1440px, 390px and 320px in light/dark themes: 18 combinations, with no page errors, page overflow or clipped controls. Tour tabs, mobile expanded screenshots and code-block scrolling also passed.
+- The packaged demo reported version 0.3.0, demo mode and 720 synthetic requests, with no external browser requests. Its isolated process was stopped after capture.
+
+Temporary test files used an isolated user-cache directory because this session's `/tmp` user quota prevented Playwright from writing its transform cache. No existing user artifacts were removed.
+
 ## Public launch: October 3, 2026
 
 The owner approved public visibility, an MIT website license and protection for `main` after the release-alignment review below. The repository is public. The root [LICENSE](../LICENSE) uses the same MIT text and 2026 Jaeyoung Shin copyright as the application; package metadata also declares MIT. The bundled font notices remain intact. The npm `private: true` safeguard is independent of source visibility.
