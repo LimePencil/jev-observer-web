@@ -1846,13 +1846,16 @@ a:hover > .text-link svg {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
-  padding-inline: 6px;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
   border-radius: 5px;
   color: var(--muted);
-  font-size: 12px;
-  font-weight: 550;
-  white-space: nowrap;
+}
+.language-switcher img {
+  display: block;
+  border-radius: 2px;
+  outline: 1px solid var(--border);
 }
 .language-switcher:hover {
   color: var(--accent-text);
@@ -1890,8 +1893,5 @@ html[lang="ko"] .eyebrow {
 @media (max-width: 450px) {
   .site-header .beta-badge {
     display: none;
-  }
-  .language-switcher {
-    padding-inline: 4px;
   }
 }

@@ -174,7 +174,8 @@ test("language switching preserves the guide, query, fragment and theme with a n
     .click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   const switcher = page.locator(".language-switcher");
-  await expect(switcher).toHaveText("English");
+  await expect(switcher).toHaveAccessibleName("영어로 보기");
+  await expect(switcher.locator("img")).toHaveAttribute("src", "/flags/us.svg");
   await expect(switcher).toHaveAttribute("hreflang", "en");
   await expect(switcher).toHaveAttribute(
     "href",
@@ -187,7 +188,13 @@ test("language switching preserves the guide, query, fragment and theme with a n
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("h2#open-the-sample")).toBeInViewport();
-  await expect(page.locator(".language-switcher")).toHaveText("한국어");
+  await expect(page.locator(".language-switcher")).toHaveAccessibleName(
+    "Switch to Korean",
+  );
+  await expect(page.locator(".language-switcher img")).toHaveAttribute(
+    "src",
+    "/flags/kr.svg",
+  );
   await page.locator(".language-switcher").click();
   await expect(page).toHaveURL(
     /\/ko\/docs\/installation\?from=language-test#open-the-sample$/,
