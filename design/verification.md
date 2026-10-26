@@ -1,5 +1,27 @@
 # Verification
 
+## Korean localization review: October 26, 2026
+
+Added a complete Korean website at `/ko` while preserving existing English URLs. Both locales use the same page components and separate root documents so `lang="ko"` is present in the initial HTML. Home, documentation index and all 11 guides remain statically rendered; unknown paths use localized 404 routes.
+
+### Content and implementation
+
+- Translated the homepage, interactive request examples, tour captions and alternative text, navigation, search, code-copy feedback, error recovery and all documentation. Screenshots remain the actual English application UI and are labeled accordingly.
+- Preserved all 35 fenced code blocks and inline-code spans. Independent review verified 82 stable heading IDs and 102 source/link destinations, including 53 local Korean links. Explicit `{#english-id}` headings keep section links stable across languages without displaying the markers.
+- Added an English/한국어 link that preserves the current guide, query and fragment. It uses ordinary navigation between root documents and also opens the equivalent guide without JavaScript. Theme preference persists through language changes.
+- Added locale-specific canonical URLs, language alternates, Open Graph locale/description and static social images. The sitemap includes both locales and alternate-language links.
+- Kept Geist with local system Korean font fallbacks; no external font service is used. The Korean social image uses a 7 KiB Noto Sans CJK KR subset from the system Noto CJK font collection. The source copyright and SIL OFL notice are retained in `public/fonts/noto-sans-kr-LICENSE.txt`.
+- Kept the Observer release baseline at 0.4.0. No application code, dependency versions or provider behavior changed.
+
+### Verification
+
+- Production build, TypeScript, ESLint, formatting and whitespace checks passed. Added eight browser cases per project for Korean server HTML/metadata, every translated route/anchor, command parity, language switching, IME composition, clipboard recovery, real screenshot controls, mobile navigation and accessibility.
+- The initial full browser run passed 220 cases with four expected skips and exposed one 404-title hydration regression in eight cases. Localized metadata now lives on the throwing routes as well as their error boundaries; unknown doc slugs reach that metadata while known guides remain prerendered. A targeted run then passed all 32 Korean cases and identified a redundant robots tag, which was removed in favor of Next.js’s automatic `noindex` tag. On the final production build, all 12 error-page and Korean guide/anchor cases passed across all four projects. Together these runs verified all 228 applicable cases; four platform-specific cases are intentionally skipped.
+- Visual QA passed 32 combinations of home, docs index, installation and connection pages at 1440px, 768px, 390px and 320px in light/dark themes. No page errors, horizontal page overflow or header-control overlap occurred. All 78 overflowing code/table scroll checks and 24 tour/dialog checks passed. Fifteen representative page/dialog screenshots and the Korean social image were visually inspected.
+- Separate source review checked localization flow, metadata, server language, section parsing and shared-component boundaries. A small isolated Next.js 16.3.6 reproduction confirmed its 404 response uses a client-recovery shell before hydration; adding nested error boundaries does not change that framework behavior. Normal pages and their language links work without JavaScript.
+
+Temporary visual and test artifacts remain outside the repository. Publication uses the existing protected-main pull-request checks and Vercel integration.
+
 ## Current release review: October 26, 2026 — Observer 0.4.0
 
 Aligned the website with the published [v0.4.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.4.0), published October 22 at 18:45:59 UTC, tag commit `cc9384ae0cc6f7a43b5926a9bee3dd52733cb670`. The release API and local tag agree. Later application changes are outside this update.

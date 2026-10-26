@@ -1,6 +1,8 @@
 "use client";
 import { Moon, Sun } from "@phosphor-icons/react";
-export function ThemeToggle() {
+import type { Locale } from "@/lib/i18n";
+export function ThemeToggle({ locale = "en" }: { locale?: Locale }) {
+  const label = locale === "ko" ? "색상 테마 전환" : "Toggle color theme";
   function toggle() {
     const root = document.documentElement;
     const dark = root.dataset.theme
@@ -18,8 +20,8 @@ export function ThemeToggle() {
     <button
       type="button"
       className="icon-button theme-toggle"
-      aria-label="Toggle color theme"
-      title="Toggle color theme"
+      aria-label={label}
+      title={label}
       onClick={toggle}
     >
       <Moon className="theme-moon" size={19} />

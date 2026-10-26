@@ -1,6 +1,6 @@
 # Jev Observer website
 
-A separate Next.js website for [Jev Observer](https://github.com/LimePencil/jev-observer): a responsive introduction, real dashboard tour, installation instructions, user guides, and developer documentation.
+An English/Korean Next.js website for [Jev Observer](https://github.com/LimePencil/jev-observer): a responsive introduction, real dashboard tour, installation instructions, user guides, and developer documentation.
 
 ## Develop
 
@@ -20,7 +20,7 @@ Open http://localhost:3000. This website has no dependency on a running Observer
 3. Deploy. No environment variables are required. The website does not deploy the Observer proxy or its SQLite database.
 4. After assigning a production domain, optionally set `NEXT_PUBLIC_SITE_URL` to the full HTTPS origin (for example your own domain) and redeploy. Without it, metadata and sitemap use Vercel's production URL; local builds use `http://localhost:3000`.
 
-Production is hosted at [jev-observer-web.vercel.app](https://jev-observer-web.vercel.app). The Vercel project is connected to this repository and deploys changes pushed to `main`.
+Production is hosted at [jev-observer-web.vercel.app](https://jev-observer-web.vercel.app), with Korean at [/ko](https://jev-observer-web.vercel.app/ko). The Vercel project is connected to this repository and deploys changes pushed to `main`.
 
 ## Verify
 
@@ -32,7 +32,7 @@ npx playwright install --with-deps chromium firefox webkit
 npm test
 ```
 
-Playwright starts the production server. It runs Chromium desktop/mobile, Firefox desktop and mobile WebKit checks for navigation and browser history, guide section links, product-tour tabs and keyboard-pannable screenshots, search and short-screen dialogs, doc routes and internal anchors, 404 recovery, clipboard success and recovery, persisted themes, reduced motion, and WCAG accessibility using axe. Native clipboard permission checks run only in Chromium; all engines verify rejected/unavailable clipboard recovery and retry. CI repeats these checks on pushes and pull requests.
+Playwright starts the production server. It runs Chromium desktop/mobile, Firefox desktop and mobile WebKit checks for navigation and browser history, guide section links, product-tour tabs and keyboard-pannable screenshots, search and short-screen dialogs, doc routes and internal anchors, 404 recovery, clipboard success and recovery, persisted themes, reduced motion, and WCAG accessibility using axe. Korean cases also verify server-rendered language, canonical/language alternates, localized search with IME composition, unchanged commands, stable cross-language anchors and localized error recovery. Native clipboard permission checks run only in Chromium; all engines verify rejected/unavailable clipboard recovery and retry. CI repeats these checks on pushes and pull requests.
 
 Wheel-scroll regressions use desktop pointer input at narrow widths because mobile WebKit emulation does not support wheel events. Other mobile checks retain device emulation; these runs do not replace testing on physical iOS devices.
 
@@ -44,14 +44,16 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 
 ## Content and assets
 
-- `app/page.tsx`: landing page. Interactive leaves live in `components/`.
+- `app/(en)/` and `app/(ko)/`: English and Korean route trees with separate root documents. Existing English URLs stay unchanged; Korean uses `/ko`. Shared landing and documentation rendering lives in `components/home-page.tsx`, `docs-home.tsx`, `doc-page.tsx` and `docs-layout.tsx`.
 - `components/hero-flow.tsx`: visual request-flow explainer with graphical synthetic answers, brief reveal animations, and reduced-motion support. Its visual styling is isolated in `hero-flow.module.css`.
-- `content/docs/*.md`: documentation with `title`, `description`, `section`, and numeric `order` frontmatter. Sections are `Getting started`, `User guide`, and `Developer guide`. Local full-text search, sidebar, page metadata, and sitemap are generated from this content.
-- `app/globals.css`: semantic light/dark tokens, layouts, responsive rules, and reduced-motion support. Typography uses locally bundled Geist fonts through `next/font/local`.
+- `content/docs/*.md` (English) and `content/docs/ko/*.md` (Korean): documentation with `title`, `description`, `section`, and numeric `order` frontmatter. Sections are `Getting started`, `User guide`, and `Developer guide`. Local full-text search, sidebar, page metadata, and sitemap are generated from each locale’s content. Keep `section` as the English identifier; its display label is localized. Translate both versions when release behavior changes, preserving code examples and technical caveats. Korean headings use `{#english-heading-id}` to keep section links and language switching stable; local Korean links start with `/ko/docs`.
+- `app/globals.css`: semantic light/dark tokens, layouts, responsive rules, and reduced-motion support. Typography uses locally bundled Geist fonts through `next/font/local`, with system Korean sans-serif fallbacks and Korean-specific line breaking. No external font service is called.
 - `design/research.md`: reference-site research, design decisions, and content boundaries.
 - `design/screenshots.md`: provenance of the actual Observer sample-mode captures.
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
-- `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
+- `lib/i18n.ts` and `lib/metadata.ts`: locale paths, section labels, canonical URLs, language alternates and Open Graph metadata. The header language link preserves the page, query and section; without JavaScript it still opens the equivalent page.
+- `app/opengraph-image/route.tsx` and `app/(ko)/ko/opengraph-image/route.tsx`: static social images. The Korean image uses a 7 KiB Noto Sans CJK KR font subset containing only its displayed text; regenerate the subset when changing that copy.
+- `public/fonts/*-LICENSE.txt`: font licenses, including the Noto CJK source notice for the Korean social-image subset. Dashboard screenshots use synthetic data; Korean captions identify their English application UI.
 
 The website and application repositories are public and MIT-licensed. Version 0.4.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
@@ -67,6 +69,6 @@ This is a presentation and documentation site. It never connects to a visitor's 
 
 ## License
 
-This website is [MIT-licensed](LICENSE), copyright 2026 Jaeyoung Shin. Bundled Geist and Geist Mono fonts retain their SIL Open Font License notices in `public/fonts/`. The npm `private: true` flag prevents accidental package publication; the source repository is public.
+This website is [MIT-licensed](LICENSE), copyright 2026 Jaeyoung Shin. Bundled Geist, Geist Mono and the Noto Korean social-image subset retain their SIL Open Font License notices in `public/fonts/`. The npm `private: true` flag prevents accidental package publication; the source repository is public.
 
 Changes to `main` require a pull request, the GitHub Actions `verify` check and resolved review conversations. The branch must be current with `main`; force-pushes and deletion are blocked, including for administrators. No additional approving reviewer is required while this repository has one maintainer.

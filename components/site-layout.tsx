@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+/* eslint-disable @next/next/no-head-element -- Shared HTML document rendered by both App Router root layouts. */
 import localFont from "next/font/local";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { site, siteUrl } from "@/lib/site";
-import "./globals.css";
+import type { Locale } from "@/lib/i18n";
+import "@/app/globals.css";
 const geist = localFont({
   src: "../public/fonts/geist-latin.woff2",
   variable: "--font-geist",
@@ -15,28 +15,14 @@ const mono = localFont({
   display: "swap",
   preload: false,
 });
-export const metadata: Metadata = {
-  metadataBase: siteUrl(),
-  title: {
-    default: "Jev Observer | Every decision. In clear view.",
-    template: "%s | Jev Observer",
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    title: site.name,
-    description: site.description,
-  },
-  twitter: { card: "summary_large_image" },
-};
 const themeScript = `(function(){try{var t=localStorage.getItem('jev-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}})()`;
-export default function RootLayout({
+export function SiteLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  locale,
+}: Readonly<{ children: React.ReactNode; locale: Locale }>) {
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
       className={`${geist.variable} ${mono.variable}`}
     >
@@ -45,11 +31,11 @@ export default function RootLayout({
       </head>
       <body>
         <a className="skip-link" href="#main">
-          Skip to content
+          {locale === "ko" ? "본문으로 건너뛰기" : "Skip to content"}
         </a>
-        <Header />
+        <Header locale={locale} />
         {children}
-        <Footer />
+        <Footer locale={locale} />
       </body>
     </html>
   );

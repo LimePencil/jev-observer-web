@@ -10,13 +10,17 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { LanguageSwitcher } from "./language-switcher";
+import { localePath, unlocalizedPath, type Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
-export function Header() {
+export function Header({ locale = "en" }: { locale?: Locale }) {
   const path = usePathname();
-  return <HeaderNavigation key={path} path={path} />;
+  return <HeaderNavigation key={path} path={path} locale={locale} />;
 }
 
-function HeaderNavigation({ path }: { path: string }) {
+function HeaderNavigation({ path, locale }: { path: string; locale: Locale }) {
+  const korean = locale === "ko";
+  const localPath = unlocalizedPath(path);
   const [open, setOpen] = useState(false);
   const header = useRef<HTMLElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -61,33 +65,44 @@ function HeaderNavigation({ path }: { path: string }) {
     <header ref={header} className="site-header">
       <div className="container nav-inner">
         <div className="brand">
-          <Link className="wordmark" href="/" onClick={() => setOpen(false)}>
+          <Link
+            className="wordmark"
+            href={localePath(locale)}
+            onClick={() => setOpen(false)}
+          >
             <Aperture size={28} weight="duotone" aria-hidden="true" />
             <span>
               jev<span className="wordmark-light"> observer</span>
             </span>
           </Link>
-          <span className="beta-badge">Beta</span>
+          <span className="beta-badge">{korean ? "베타" : "Beta"}</span>
         </div>
-        <nav className="desktop-nav" aria-label="Main navigation">
-          <Link href="/#tour">Product</Link>
+        <nav
+          className="desktop-nav"
+          aria-label={korean ? "주요 메뉴" : "Main navigation"}
+        >
+          <Link href={`${localePath(locale)}#tour`}>
+            {korean ? "제품 소개" : "Product"}
+          </Link>
           <Link
-            href="/docs"
-            aria-current={path.startsWith("/docs") ? "page" : undefined}
+            href={localePath(locale, "/docs")}
+            aria-current={localPath.startsWith("/docs") ? "page" : undefined}
           >
-            Documentation
+            {korean ? "문서" : "Documentation"}
           </Link>
           <a href={site.repo} target="_blank" rel="noreferrer">
             GitHub <ArrowUpRight size={13} />
           </a>
         </nav>
         <div className="nav-actions">
-          <ThemeToggle />
+          <LanguageSwitcher locale={locale} />
+          <ThemeToggle locale={locale} />
           <Link
             className="button button-small button-primary nav-install"
-            href="/docs/installation"
+            href={localePath(locale, "/docs/installation")}
           >
-            Install Observer <ArrowUpRight size={15} />
+            {korean ? "Observer 설치" : "Install Observer"}{" "}
+            <ArrowUpRight size={15} />
           </Link>
           <button
             ref={menuButton}
@@ -96,7 +111,15 @@ function HeaderNavigation({ path }: { path: string }) {
             onClick={() => setOpen((current) => !current)}
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-label={
+              open
+                ? korean
+                  ? "메뉴 닫기"
+                  : "Close navigation"
+                : korean
+                  ? "메뉴 열기"
+                  : "Open navigation"
+            }
           >
             {open ? <X size={22} /> : <List size={22} />}
           </button>
@@ -106,20 +129,27 @@ function HeaderNavigation({ path }: { path: string }) {
         <nav
           className="mobile-nav"
           id="mobile-navigation"
-          aria-label="Mobile navigation"
+          aria-label={korean ? "모바일 메뉴" : "Mobile navigation"}
         >
-          <Link href="/#tour" onClick={() => setOpen(false)}>
-            Product <ArrowUpRight size={17} />
+          <Link
+            href={`${localePath(locale)}#tour`}
+            onClick={() => setOpen(false)}
+          >
+            {korean ? "제품 소개" : "Product"} <ArrowUpRight size={17} />
           </Link>
           <Link
-            href="/docs"
+            href={localePath(locale, "/docs")}
             onClick={() => setOpen(false)}
-            aria-current={path.startsWith("/docs") ? "page" : undefined}
+            aria-current={localPath.startsWith("/docs") ? "page" : undefined}
           >
-            Documentation <ArrowUpRight size={17} />
+            {korean ? "문서" : "Documentation"} <ArrowUpRight size={17} />
           </Link>
-          <Link href="/docs/installation" onClick={() => setOpen(false)}>
-            Install Observer <ArrowUpRight size={17} />
+          <Link
+            href={localePath(locale, "/docs/installation")}
+            onClick={() => setOpen(false)}
+          >
+            {korean ? "Observer 설치" : "Install Observer"}{" "}
+            <ArrowUpRight size={17} />
           </Link>
           <a
             href={site.repo}

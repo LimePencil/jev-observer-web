@@ -1,4 +1,3 @@
-import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -9,43 +8,33 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { getDocs, sections } from "@/lib/docs";
 import { site } from "@/lib/site";
-export async function generateMetadata(
-  _props: unknown,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
-  const description =
-    "Install Jev Observer, connect your application, explore your local history, and learn how to contribute.";
-  return {
-    title: "Documentation",
-    description,
-    alternates: { canonical: "/docs" },
-    openGraph: {
-      type: "website",
-      siteName: site.name,
-      title: `Documentation | ${site.name}`,
-      description,
-      url: "/docs",
-      images: (await parent).openGraph?.images,
-    },
-  };
-}
-export default function DocsHome() {
-  const docs = getDocs();
+import { localePath, sectionLabel, type Locale } from "@/lib/i18n";
+export function DocsHome({ locale = "en" }: { locale?: Locale }) {
+  const ko = locale === "ko";
+  const href = (path: string) => localePath(locale, path);
+  const docs = getDocs(locale);
   const icons = [TerminalWindow, BookOpen, Code];
   return (
     <div className="docs-index">
-      <div className="doc-breadcrumb">Jev Observer / Docs</div>
-      <h1>Documentation</h1>
+      <div className="doc-breadcrumb">
+        Jev Observer / {ko ? "문서" : "Docs"}
+      </div>
+      <h1>{ko ? "문서" : "Documentation"}</h1>
       <p className="doc-lead">
-        Set up Observer {site.version}, explore your history, or contribute to
-        the project.
+        {ko
+          ? `Observer ${site.version}를 설치하고, 기록을 살펴보고, 프로젝트에 기여하세요.`
+          : `Set up Observer ${site.version}, explore your history, or contribute to the project.`}
       </p>
-      <Link href="/docs/installation" className="docs-start">
+      <Link href={href("/docs/installation")} className="docs-start">
         <TerminalWindow size={28} />
         <div>
-          <strong>Your first look at Observer</strong>
+          <strong>
+            {ko ? "Observer 시작하기" : "Your first look at Observer"}
+          </strong>
           <span>
-            Install Observer and explore the sample. No provider key needed.
+            {ko
+              ? "Observer를 설치하고 샘플을 살펴보세요. 제공업체 키는 필요하지 않습니다."
+              : "Install Observer and explore the sample. No provider key needed."}
           </span>
         </div>
         <ArrowRight size={23} />
@@ -56,13 +45,13 @@ export default function DocsHome() {
           <section className="docs-index-section" key={section}>
             <h2>
               <Icon size={23} />
-              {section}
+              {sectionLabel(section, locale)}
             </h2>
             <div className="docs-index-links">
               {docs
                 .filter((doc) => doc.section === section)
                 .map((doc) => (
-                  <Link key={doc.slug} href={`/docs/${doc.slug}`}>
+                  <Link key={doc.slug} href={href(`/docs/${doc.slug}`)}>
                     <div>
                       <h3>{doc.title}</h3>
                       <p>{doc.description}</p>
