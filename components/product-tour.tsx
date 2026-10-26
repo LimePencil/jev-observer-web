@@ -9,6 +9,7 @@ import {
 } from "@phosphor-icons/react";
 import { useRef, useState } from "react";
 import { site } from "@/lib/site";
+import type { Locale } from "@/lib/i18n";
 import overviewImage from "@/public/images/observer-metrics.png";
 import questionsImage from "@/public/images/observer-questions.png";
 import requestImage from "@/public/images/observer-live.png";
@@ -40,18 +41,40 @@ const views = [
     alt: "Jev Observer request detail showing a synthetic request, typed answers, and outcome probabilities.",
   },
 ];
-export function ProductTour() {
+const koreanViews = views.map((view, index) => ({
+  ...view,
+  ...[
+    {
+      title: "개요",
+      description: "지연 시간, 사용량, 실패를 하나의 기록에서 확인하세요.",
+      alt: "합성 샘플 요청, 지연 시간 지표, 확인된 토큰의 집계 범위, 질문 그룹, 최근 요청이 표시된 Jev Observer 영문 개요 화면.",
+    },
+    {
+      title: "질문 그룹",
+      description: "서로 다른 정의를 섞지 않고 반복되는 질문을 추적하세요.",
+      alt: "샘플 데이터의 support_routing 질문, 답변 분포, 정의 버전이 표시된 Jev Observer 영문 질문 그룹 상세 화면.",
+    },
+    {
+      title: "요청 상세",
+      description: "타입별 답변과 확률, 해당 요청을 함께 살펴보세요.",
+      alt: "합성 요청, 타입별 답변, 결과 확률이 표시된 Jev Observer 영문 요청 상세 화면.",
+    },
+  ][index],
+}));
+export function ProductTour({ locale = "en" }: { locale?: Locale }) {
+  const korean = locale === "ko";
+  const localizedViews = korean ? koreanViews : views;
   const [selected, setSelected] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const view = views[selected];
+  const view = localizedViews[selected];
   function keyDown(event: React.KeyboardEvent, index: number) {
     let next = index;
-    if (event.key === "ArrowRight") next = (index + 1) % views.length;
+    if (event.key === "ArrowRight") next = (index + 1) % localizedViews.length;
     else if (event.key === "ArrowLeft")
-      next = (index + views.length - 1) % views.length;
+      next = (index + localizedViews.length - 1) % localizedViews.length;
     else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = views.length - 1;
+    else if (event.key === "End") next = localizedViews.length - 1;
     else return;
     event.preventDefault();
     setSelected(next);
@@ -60,8 +83,12 @@ export function ProductTour() {
   return (
     <div className="product-tour">
       <div className="tour-toolbar">
-        <div className="tour-tabs" role="tablist" aria-label="Dashboard views">
-          {views.map((item, index) => (
+        <div
+          className="tour-tabs"
+          role="tablist"
+          aria-label={korean ? "대시보드 보기" : "Dashboard views"}
+        >
+          {localizedViews.map((item, index) => (
             <button
               key={item.id}
               ref={(el) => {
@@ -91,13 +118,13 @@ export function ProductTour() {
             event.currentTarget.focus();
             dialog.current?.showModal();
           }}
-          aria-label="Expand screenshot"
-          title="Expand screenshot"
+          aria-label={korean ? "스크린샷 확대" : "Expand screenshot"}
+          title={korean ? "스크린샷 확대" : "Expand screenshot"}
         >
           <ArrowsOut size={19} />
         </button>
       </div>
-      {views.map((item, index) => (
+      {localizedViews.map((item, index) => (
         <div
           key={item.id}
           className="tour-panel"
@@ -123,12 +150,15 @@ export function ProductTour() {
       ))}
       <div className="tour-caption">
         <p aria-live="polite">{view.description}</p>
-        <span>Observer {site.version}. Synthetic sample data.</span>
+        <span>
+          Observer {site.version}.{" "}
+          {korean ? "영문 UI · 합성 샘플 데이터." : "Synthetic sample data."}
+        </span>
       </div>
       <dialog
         ref={dialog}
         className="image-dialog"
-        aria-label={`${view.title} screenshot`}
+        aria-label={`${view.title} ${korean ? "스크린샷" : "screenshot"}`}
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
         }}
@@ -136,12 +166,17 @@ export function ProductTour() {
         <div className="image-dialog-inner">
           <div className="image-dialog-header">
             <span>
-              {view.title} <small>Synthetic sample data</small>
+              {view.title}{" "}
+              <small>
+                {korean
+                  ? "영문 UI · 합성 샘플 데이터"
+                  : "Synthetic sample data"}
+              </small>
             </span>
             <button
               type="button"
               className="icon-button"
-              aria-label="Close screenshot"
+              aria-label={korean ? "스크린샷 닫기" : "Close screenshot"}
               onClick={() => dialog.current?.close()}
             >
               <X size={22} />
@@ -151,7 +186,7 @@ export function ProductTour() {
             className="image-dialog-viewport"
             tabIndex={0}
             role="region"
-            aria-label="Screenshot details"
+            aria-label={korean ? "스크린샷 상세" : "Screenshot details"}
           >
             <Image
               src={view.image}

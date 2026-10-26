@@ -1,4 +1,3 @@
-import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -10,44 +9,19 @@ import {
 import { getDoc, getDocs, getHeadings } from "@/lib/docs";
 import { Markdown } from "@/components/markdown";
 import { site } from "@/lib/site";
-export function generateStaticParams() {
-  return getDocs().map((doc) => ({ slug: doc.slug }));
-}
-export const dynamicParams = false;
-export async function generateMetadata(
-  {
-    params,
-  }: {
-    params: Promise<{ slug: string }>;
-  },
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
-  const { slug } = await params;
-  const doc = getDoc(slug);
-  if (!doc) return {};
-  return {
-    title: doc.title,
-    description: doc.description,
-    alternates: { canonical: `/docs/${slug}` },
-    openGraph: {
-      type: "website",
-      siteName: site.name,
-      title: `${doc.title} | ${site.name}`,
-      description: doc.description,
-      url: `/docs/${slug}`,
-      images: (await parent).openGraph?.images,
-    },
-  };
-}
-export default async function DocPage({
-  params,
+import { localePath, sectionLabel, type Locale } from "@/lib/i18n";
+export function DocPage({
+  slug,
+  locale = "en",
 }: {
-  params: Promise<{ slug: string }>;
+  slug: string;
+  locale?: Locale;
 }) {
-  const { slug } = await params;
-  const doc = getDoc(slug);
+  const ko = locale === "ko";
+  const href = (path: string) => localePath(locale, path);
+  const doc = getDoc(slug, locale);
   if (!doc) notFound();
-  const docs = getDocs();
+  const docs = getDocs(locale);
   const index = docs.findIndex((item) => item.slug === slug);
   const previous = docs[index - 1];
   const next = docs[index + 1];
@@ -56,18 +30,19 @@ export default async function DocPage({
     <>
       <article className="doc-article">
         <div className="doc-breadcrumb">
-          <Link href="/docs">Docs</Link>
+          <Link href={href("/docs")}>{ko ? "문서" : "Docs"}</Link>
           <span>/</span>
-          {doc.section}
+          {sectionLabel(doc.section, locale)}
         </div>
         <h1>{doc.title}</h1>
         <p className="doc-lead">{doc.description}</p>
         {headings.length > 0 && (
           <details className="doc-mobile-toc">
             <summary>
-              On this page <CaretDown size={16} aria-hidden="true" />
+              {ko ? "이 페이지의 내용" : "On this page"}{" "}
+              <CaretDown size={16} aria-hidden="true" />
             </summary>
-            <nav aria-label="On this page">
+            <nav aria-label={ko ? "이 페이지의 내용" : "On this page"}>
               {headings.map((heading) => (
                 <a key={heading.id} href={`#${heading.id}`}>
                   {heading.title}
@@ -76,24 +51,28 @@ export default async function DocPage({
             </nav>
           </details>
         )}
-        <Markdown content={doc.content} />
+        <Markdown content={doc.content} locale={locale} />
         <div className="doc-source">
           <a href={site.repo} target="_blank" rel="noreferrer">
-            View project source <ArrowUpRight size={15} />
+            {ko ? "프로젝트 소스 보기" : "View project source"}{" "}
+            <ArrowUpRight size={15} />
           </a>
           <span>
-            Found an issue?{" "}
+            {ko ? "문제를 발견하셨나요?" : "Found an issue?"}{" "}
             <a href={`${site.repo}/issues`} target="_blank" rel="noreferrer">
-              Open an issue
+              {ko ? "이슈 등록" : "Open an issue"}
             </a>
           </span>
         </div>
-        <nav className="doc-pagination" aria-label="Adjacent documentation">
+        <nav
+          className="doc-pagination"
+          aria-label={ko ? "이전 및 다음 문서" : "Adjacent documentation"}
+        >
           {previous ? (
-            <Link href={`/docs/${previous.slug}`}>
+            <Link href={href(`/docs/${previous.slug}`)}>
               <ArrowLeft size={18} />
               <div>
-                <small>Previous</small>
+                <small>{ko ? "이전" : "Previous"}</small>
                 <span>{previous.title}</span>
               </div>
             </Link>
@@ -101,9 +80,9 @@ export default async function DocPage({
             <span />
           )}
           {next && (
-            <Link href={`/docs/${next.slug}`}>
+            <Link href={href(`/docs/${next.slug}`)}>
               <div>
-                <small>Next</small>
+                <small>{ko ? "다음" : "Next"}</small>
                 <span>{next.title}</span>
               </div>
               <ArrowRight size={18} />
@@ -112,18 +91,18 @@ export default async function DocPage({
         </nav>
       </article>
       <aside className="doc-toc">
-        <p>On this page</p>
-        <nav aria-label="On this page">
+        <p>{ko ? "이 페이지의 내용" : "On this page"}</p>
+        <nav aria-label={ko ? "이 페이지의 내용" : "On this page"}>
           {headings.map((heading) => (
             <a key={heading.id} href={`#${heading.id}`}>
               {heading.title}
             </a>
           ))}
         </nav>
-        <Link className="toc-help" href="/docs/troubleshooting">
-          Need a hand?
+        <Link className="toc-help" href={href("/docs/troubleshooting")}>
+          {ko ? "도움이 필요하신가요?" : "Need a hand?"}
           <span>
-            Troubleshooting <ArrowUpRight size={13} />
+            {ko ? "문제 해결" : "Troubleshooting"} <ArrowUpRight size={13} />
           </span>
         </Link>
       </aside>

@@ -1,9 +1,10 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { Locale } from "@/lib/i18n";
 import { Children, isValidElement, type ReactNode } from "react";
 import Link from "next/link";
 import { CodeBlock } from "./code-block";
-import { headingId } from "@/lib/docs";
+import { headingId, headingText } from "@/lib/docs";
 function plain(node: ReactNode): string {
   return Children.toArray(node)
     .map((child) =>
@@ -13,7 +14,18 @@ function plain(node: ReactNode): string {
     )
     .join("");
 }
-export function Markdown({ content }: { content: string }) {
+function headingChildren(children: ReactNode) {
+  return Children.map(children, (child) =>
+    typeof child === "string" ? headingText(child) : child,
+  );
+}
+export function Markdown({
+  content,
+  locale = "en",
+}: {
+  content: string;
+  locale?: Locale;
+}) {
   return (
     <div className="prose">
       <ReactMarkdown
@@ -24,7 +36,7 @@ export function Markdown({ content }: { content: string }) {
             return (
               <h2 id={id}>
                 <a href={`#${id}`}>
-                  {children}
+                  {headingChildren(children)}
                   <span className="heading-hash" aria-hidden="true">
                     #
                   </span>
@@ -33,7 +45,7 @@ export function Markdown({ content }: { content: string }) {
             );
           },
           h3: ({ children }) => (
-            <h3 id={headingId(plain(children))}>{children}</h3>
+            <h3 id={headingId(plain(children))}>{headingChildren(children)}</h3>
           ),
           a: ({ href = "", children }) =>
             href.startsWith("/") ? (
@@ -55,6 +67,7 @@ export function Markdown({ content }: { content: string }) {
             )
               return (
                 <CodeBlock
+                  locale={locale}
                   code={plain(code.props.children).replace(/\n$/, "")}
                   language={
                     code.props.className?.replace("language-", "") || "text"
@@ -68,7 +81,7 @@ export function Markdown({ content }: { content: string }) {
               className="table-scroll"
               tabIndex={0}
               role="region"
-              aria-label="Reference table"
+              aria-label={locale === "ko" ? "참조 표" : "Reference table"}
             >
               <table>{children}</table>
             </div>

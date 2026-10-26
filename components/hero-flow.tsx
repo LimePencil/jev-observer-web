@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Aperture, BracketsCurly, Code } from "@phosphor-icons/react";
+import type { Locale } from "@/lib/i18n";
 import styles from "./hero-flow.module.css";
 
 // Answers from sample_records()[5] in the application's synthetic Support inbox.
@@ -29,6 +30,33 @@ const examples = [
     answer: "1.7 / 2",
     detail: "Calm to very angry",
     distribution: "Calm 10%, Frustrated 10%, Very angry 80%.",
+  },
+];
+
+const koreanExamples = [
+  {
+    id: "routing",
+    label: "담당 팀",
+    question: "이 문의는 어느 팀에서 처리해야 하나요?",
+    answer: "기술 지원",
+    detail: "선택된 담당 팀",
+    distribution: "결제 10%, 기술 지원 80%, 영업 10%.",
+  },
+  {
+    id: "urgency",
+    label: "긴급도",
+    question: "오늘 안에 고객에게 답변해야 하나요?",
+    answer: "88%",
+    detail: "오늘 답변이 필요할 확률",
+    distribution: "보고된 확률: 88%.",
+  },
+  {
+    id: "frustration",
+    label: "불만도",
+    question: "고객이 얼마나 불만을 느끼고 있나요?",
+    answer: "1.7 / 2",
+    detail: "차분함부터 매우 화남까지",
+    distribution: "차분함 10%, 불만 10%, 매우 화남 80%.",
   },
 ];
 
@@ -89,11 +117,13 @@ function AnswerGraphic({ selected }: { selected: number }) {
   );
 }
 
-export function HeroFlow() {
+export function HeroFlow({ locale = "en" }: { locale?: Locale }) {
+  const korean = locale === "ko";
+  const localizedExamples = korean ? koreanExamples : examples;
   const [selected, setSelected] = useState(0);
   const figure = useRef<HTMLElement>(null);
   const svg = useRef<SVGSVGElement>(null);
-  const example = examples[selected];
+  const example = localizedExamples[selected];
 
   useEffect(() => {
     const graphic = svg.current;
@@ -156,13 +186,15 @@ export function HeroFlow() {
     <figure
       className={styles.flow}
       ref={figure}
-      aria-label="Interactive request example"
+      aria-label={
+        korean ? "직접 살펴보는 요청 예시" : "Interactive request example"
+      }
       aria-describedby="request-example-description"
     >
       <p className="sr-only" id="request-example-description">
-        A sample request travels from your application through Observer to your
-        provider. Observer stores captured answers locally. Choose a question to
-        inspect its sample answer.
+        {korean
+          ? "샘플 요청이 애플리케이션에서 Observer를 거쳐 제공업체로 전달됩니다. Observer는 캡처한 답변을 로컬에 저장합니다. 질문을 선택해 샘플 답변을 확인하세요."
+          : "A sample request travels from your application through Observer to your provider. Observer stores captured answers locally. Choose a question to inspect its sample answer."}
       </p>
       <div className={styles.diagram}>
         <svg
@@ -207,15 +239,17 @@ export function HeroFlow() {
           <BracketsCurly size={27} />
         </div>
         <div className={styles.nodeLabels} aria-hidden="true">
-          <span>Application</span>
+          <span>{korean ? "애플리케이션" : "Application"}</span>
           <strong>Observer</strong>
-          <span>Provider</span>
+          <span>{korean ? "제공업체" : "Provider"}</span>
         </div>
       </div>
 
       <fieldset className={styles.choices}>
-        <legend className="sr-only">Choose a sample question</legend>
-        {examples.map((item, index) => (
+        <legend className="sr-only">
+          {korean ? "샘플 질문 선택" : "Choose a sample question"}
+        </legend>
+        {localizedExamples.map((item, index) => (
           <label key={item.id} className={styles.choice}>
             <input
               type="radio"
@@ -241,8 +275,14 @@ export function HeroFlow() {
         </div>
       </div>
       <figcaption className={styles.caveat}>
-        <span>Synthetic sample data</span>
-        {selected === 1 && <span>Model output, not measured accuracy</span>}
+        <span>{korean ? "합성 샘플 데이터" : "Synthetic sample data"}</span>
+        {selected === 1 && (
+          <span>
+            {korean
+              ? "모델 출력값이며 실제 정확도가 아닙니다"
+              : "Model output, not measured accuracy"}
+          </span>
+        )}
       </figcaption>
     </figure>
   );

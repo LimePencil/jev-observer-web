@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { localePath, sectionLabel, type Locale } from "@/lib/i18n";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, MagnifyingGlass, X } from "@phosphor-icons/react";
 import {
@@ -16,7 +17,14 @@ type SearchDoc = {
   content: string;
   section: string;
 };
-export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
+export function DocsSearch({
+  docs,
+  locale = "en",
+}: {
+  docs: SearchDoc[];
+  locale?: Locale;
+}) {
+  const ko = locale === "ko";
   const pathname = usePathname();
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -96,16 +104,16 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
         className="search-trigger"
         type="button"
         onClick={open}
-        aria-label="Search documentation"
+        aria-label={ko ? "문서 검색" : "Search documentation"}
       >
         <MagnifyingGlass size={18} />
-        <span>Search docs</span>
+        <span>{ko ? "문서 검색" : "Search docs"}</span>
         <kbd>⌘ K</kbd>
       </button>
       <dialog
         ref={dialog}
         className="search-dialog"
-        aria-label="Documentation search"
+        aria-label={ko ? "문서 검색" : "Documentation search"}
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
         }}
@@ -118,9 +126,11 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => navigateResults(event)}
-              aria-label="Search documentation"
+              aria-label={ko ? "문서 검색" : "Search documentation"}
               aria-controls="documentation-search-results"
-              placeholder="Search the documentation..."
+              placeholder={
+                ko ? "문서에서 검색..." : "Search the documentation..."
+              }
               type="search"
               autoComplete="off"
             />
@@ -128,7 +138,7 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
               type="button"
               className="icon-button"
               onClick={() => dialog.current?.close()}
-              aria-label="Close search"
+              aria-label={ko ? "검색 닫기" : "Close search"}
             >
               <X size={21} />
             </button>
@@ -136,8 +146,12 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
           <div className="search-results" id="documentation-search-results">
             <p className="search-hint" aria-live="polite">
               {normalizedQuery
-                ? `${results.length} matching ${results.length === 1 ? "page" : "pages"}`
-                : "Explore the documentation"}
+                ? ko
+                  ? `검색 결과 ${results.length}개`
+                  : `${results.length} matching ${results.length === 1 ? "page" : "pages"}`
+                : ko
+                  ? "문서를 둘러보세요"
+                  : "Explore the documentation"}
             </p>
             {results.length ? (
               results.map((doc, index) => (
@@ -146,13 +160,13 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
                   ref={(element) => {
                     resultLinks.current[index] = element;
                   }}
-                  href={`/docs/${doc.slug}`}
+                  href={localePath(locale, `/docs/${doc.slug}`)}
                   onClick={() => dialog.current?.close()}
                   onKeyDown={(event) => navigateResults(event, index)}
                   className="search-result"
                 >
                   <div>
-                    <span>{doc.section}</span>
+                    <span>{sectionLabel(doc.section, locale)}</span>
                     <strong>{doc.title}</strong>
                     <p>{doc.description}</p>
                   </div>
@@ -161,16 +175,29 @@ export function DocsSearch({ docs }: { docs: SearchDoc[] }) {
               ))
             ) : (
               <div className="search-empty">
-                <strong>No pages found for “{query}”</strong>
-                <p>Try “install”, “SDK”, “privacy”, or “configuration”.</p>
+                <strong>
+                  {ko
+                    ? `“${query}” 검색 결과가 없습니다`
+                    : `No pages found for “${query}”`}
+                </strong>
+                <p>
+                  {ko
+                    ? "“설치”, “SDK”, “개인정보”, “설정”을 검색해 보세요."
+                    : "Try “install”, “SDK”, “privacy”, or “configuration”."}
+                </p>
               </div>
             )}
           </div>
           <div className="search-footer">
-            <span>Searches all guides, including code examples.</span>
             <span>
-              <kbd>↑</kbd> <kbd>↓</kbd> to browse · <kbd>Enter</kbd> to open ·{" "}
-              <kbd>Esc</kbd> to close
+              {ko
+                ? "코드 예제를 포함한 모든 가이드에서 검색합니다."
+                : "Searches all guides, including code examples."}
+            </span>
+            <span>
+              <kbd>↑</kbd> <kbd>↓</kbd> {ko ? "이동" : "to browse"} ·{" "}
+              <kbd>Enter</kbd> {ko ? "열기" : "to open"} · <kbd>Esc</kbd>{" "}
+              {ko ? "닫기" : "to close"}
             </span>
           </div>
         </div>

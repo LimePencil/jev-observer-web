@@ -1,7 +1,15 @@
 "use client";
+import type { Locale } from "@/lib/i18n";
 import { Check, Copy } from "@phosphor-icons/react";
 import { useEffect, useId, useRef, useState } from "react";
-export function CopyButton({ text }: { text: string }) {
+export function CopyButton({
+  text,
+  locale = "en",
+}: {
+  text: string;
+  locale?: Locale;
+}) {
+  const ko = locale === "ko";
   const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const [copying, setCopying] = useState(false);
   const [selected, setSelected] = useState(false);
@@ -53,21 +61,35 @@ export function CopyButton({ text }: { text: string }) {
         aria-describedby={status === "failed" ? statusId : undefined}
         aria-label={
           status === "copied"
-            ? "Copied to clipboard"
+            ? ko
+              ? "클립보드에 복사했습니다"
+              : "Copied to clipboard"
             : status === "failed"
-              ? "Retry copying code"
-              : "Copy code"
+              ? ko
+                ? "코드 복사 다시 시도"
+                : "Retry copying code"
+              : ko
+                ? "코드 복사"
+                : "Copy code"
         }
       >
         {status === "copied" ? <Check size={16} /> : <Copy size={16} />}
         <span>
           {copying
-            ? "Copying…"
+            ? ko
+              ? "복사 중…"
+              : "Copying…"
             : status === "copied"
-              ? "Copied"
+              ? ko
+                ? "복사 완료"
+                : "Copied"
               : status === "failed"
-                ? "Retry copy"
-                : "Copy"}
+                ? ko
+                  ? "다시 복사"
+                  : "Retry copy"
+                : ko
+                  ? "복사"
+                  : "Copy"}
         </span>
       </button>
       <span
@@ -78,11 +100,17 @@ export function CopyButton({ text }: { text: string }) {
         aria-atomic="true"
       >
         {status === "copied"
-          ? "Copied to clipboard."
+          ? ko
+            ? "클립보드에 복사했습니다."
+            : "Copied to clipboard."
           : status === "failed"
             ? selected
-              ? "Automatic copy failed. Code selected. Press Ctrl+C (⌘C on Mac), or use your device’s Copy command."
-              : "Automatic copy failed. Select the code below and use your device’s Copy command, or try again."
+              ? ko
+                ? "자동 복사에 실패했습니다. 코드가 선택되었습니다. Ctrl+C(Mac은 ⌘C)를 누르거나 기기의 복사 명령을 사용하세요."
+                : "Automatic copy failed. Code selected. Press Ctrl+C (⌘C on Mac), or use your device’s Copy command."
+              : ko
+                ? "자동 복사에 실패했습니다. 아래 코드를 선택한 뒤 기기의 복사 명령을 사용하거나 다시 시도하세요."
+                : "Automatic copy failed. Select the code below and use your device’s Copy command, or try again."
             : ""}
       </span>
     </>
