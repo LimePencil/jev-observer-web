@@ -1,23 +1,23 @@
 # Dashboard screenshots
 
-Captured on 2026-10-18 from the official public Jev Observer v0.3.1 Linux release.
+Captured on 2026-10-26 from the official public Jev Observer v0.4.0 Linux release.
 These are unmodified browser screenshots, not mockups or fabricated application
-views. They replace the earlier v0.3.0 public-release captures.
+views. They replace the earlier v0.3.1 public-release captures.
 
 ## Provenance
 
-- Application: [`v0.3.1` public release](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.1),
-  package `jev-observer-v0.3.1-x86_64-unknown-linux-musl.tar.gz`, with its embedded UI.
-  Tag commit: `5501c265f53c06462f7785a6ef1f277d094427d1`.
+- Application: [`v0.4.0` public release](https://github.com/LimePencil/jev-observer/releases/tag/v0.4.0),
+  package `jev-observer-v0.4.0-x86_64-unknown-linux-musl.tar.gz`, with its embedded UI.
+  Tag commit: `cc9384ae0cc6f7a43b5926a9bee3dd52733cb670`.
 - Downloaded the native package and `SHA256SUMS` using `gh release download`.
-  SHA-256 verified: `e8b2a2c4470fb4573e09a9416605273e1968eae31b68d4b23098998ca15ec583`.
-  The downloaded executable reported `jev-observer 0.3.1`.
-- Launch: `./jev-observer --demo --port 18767 --db <capture-dir>/observer.sqlite`,
+  SHA-256 verified: `d5a9ea6c18daa187a2e1771c54c626da219365375a04dac9239684ed858d30d7`.
+  The downloaded executable reported `jev-observer 0.4.0`.
+- Launch: `./jev-observer --demo --port 18768 --db <capture-dir>/observer.sqlite`,
   using an isolated temporary directory outside the website checkout.
 - Demo mode seeds 720 synthetic requests, disables forwarding, and uses a
   separate demo database. No provider calls or credentials were used.
 - Browser authentication: username `observer`, using the isolated demo token file
-  directly in Playwright's HTTP credentials. The token was not printed or captured.
+  (`observer.demo.sqlite.token`) directly in Playwright's HTTP credentials. The token was not printed or captured.
 - Browser: Playwright Chromium `153.0.8010.12`, light color scheme, reduced motion,
   `en-US` locale, UTC display timezone, viewport 1440 × 950, device scale factor 1.5.
   The dashboard uses `?window=all` (All history).
@@ -25,7 +25,7 @@ views. They replace the earlier v0.3.0 public-release captures.
 - The tour imports these images as bundled assets. Content hashes in their URLs
   prevent browsers and the image optimizer from reusing old development captures.
 - Assertions confirmed 720 sample requests, group definition versions, the request
-  review control, and authenticated settings reporting `demo: true`, `version: 0.3.1`.
+  review control, and authenticated settings reporting `demo: true`, `version: 0.4.0`.
   No page errors or external browser requests occurred.
 - The isolated capture process was terminated cleanly with `SIGINT` after capture.
   Existing processes and the application source checkout were left unchanged.

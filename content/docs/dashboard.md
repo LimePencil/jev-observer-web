@@ -13,7 +13,7 @@ Filter by source, model and time window: last hour, 24 hours, seven days or all 
 
 Search requests by source, request ID or question key; `Ctrl-K` (`⌘K` on macOS) focuses search when details are closed. The separate **Find a question group** field searches all groups in the selected scope without changing request totals. Select **Failures** to investigate unsuccessful requests.
 
-The feed initially shows 12 records; **Show 100 records** expands the current page when enough records are available. Use **Older requests / Newer requests** and **Older groups / Newer groups** to browse beyond it. Summaries cover the full selected history, not just the current page. A failed page load keeps the last loaded page and offers a retry.
+The feed initially shows 12 records; **Show 100 records** expands the current page when enough records are available. Use **Older requests / Newer requests** and **Older groups / Newer groups** to browse beyond it. Request navigation remains available during a question-group search. Summaries cover the full selected history, not just the current page. A failed page load keeps the last loaded page and offers a retry.
 
 ## Read the summary
 
@@ -31,15 +31,17 @@ Each request contributes usage and cost once, even with multiple answers. Import
 
 Select a group to see its distribution and valid-answer count. **Inspect group** opens activity, observations and definition versions. Choose **Compare with** to compare observed outcomes. Different input histories are not a controlled accuracy comparison. Detail observations are bounded; use the request stream to continue investigating.
 
-Choice shows selected options, Score shows a rubric value, and Noul shows a probability. Invalid or missing answers are excluded from valid distributions. A failed request is not a negative Noul answer.
+Choice shows selected options, Score shows a rubric value, and Noul shows a probability. Native Decisions preserves typed Choice values: boolean `true` and string `"true"` remain distinct in answers and distributions. Score rubrics retain their original order and labels. Invalid, missing or refused answers are excluded from valid distributions. A failed request is not a negative Noul answer.
+
+Box answers show geometry, confidence and supported presence fields for reviewed TypeSafe and H2O profiles. Inspect and review each observation individually; boxes have no scalar mean or histogram. H2O's no-localization result does not establish that a target is absent. See [model-specific interpretation](https://github.com/LimePencil/jev-observer/blob/v0.4.0/docs/models.md#compatible-http-servers).
 
 Grouping uses source, question key, full definition, presentation order and task version. Changed or redacted definitions keep separate statistics. See [grouping metadata](/docs/connecting#name-sources-and-task-versions).
 
 ## Inspect a request
 
-Open a request for answers, probabilities, definitions, captured extensions and application actions. Check capture completeness before interpreting missing data. Requests with many decisions have **Previous decisions / Next decisions** controls.
+Open a request for answers, probabilities, definitions, captured extensions and application actions. Native Decisions retains question order, optional names and refusals. Check capture completeness before interpreting missing data. Requests with many decisions have **Previous decisions / Next decisions** controls. Inspection timestamps include full dates and offsets; large JSON sections load when expanded.
 
-Label an answer `correct`, `incorrect` or `unknown` and watch for **Saved**. Pending reviews survive closing and reopening details; failures remain visible. Model confidence is not measured accuracy.
+Label an answer `correct`, `incorrect` or `unknown` and watch for **Saved**. Feedback follows the current saved label. Pending reviews survive closing and reopening details; failures remain visible. Pending imports and deletion also retain their status after their drawers close. Model confidence is not measured accuracy.
 
 ## Pause while investigating
 

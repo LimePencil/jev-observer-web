@@ -5,9 +5,9 @@ section: "Getting started"
 order: 1
 ---
 
-Jev Observer is a local proxy and dashboard for Jev and compatible System One models, including local Laya servers. Inspect answers, compare question definitions, and track failures, latency, token usage and cost in one place.
+Jev Observer is a local proxy and dashboard for Jev and compatible decision models, including local Laya servers. Inspect answers, compare question definitions, and track failures, latency, token usage and cost in one place.
 
-It runs as one executable with a SQLite database and bundled dashboard. Version **0.3.1** is an MIT-licensed working prototype with native packages for Linux, macOS and Windows.
+It runs as one executable with a SQLite database and bundled dashboard. Version **0.4.0** is an MIT-licensed working prototype with native packages for Linux, macOS and Windows.
 
 ## Start with a real workflow
 
@@ -18,9 +18,9 @@ It runs as one executable with a SQLite database and bundled dashboard. Version 
 
 ## What happens to a request
 
-Your application sends `POST /v1/systemone` through Observer on `127.0.0.1:8765` to one configured upstream. Observer saves bounded request and response captures for local inspection. A changed question definition keeps separate statistics; a request with several answers contributes usage and cost only once.
+Your application sends requests through Observer on `127.0.0.1:8765` to one configured upstream. System One uses `POST /v1/systemone` by default; native Decisions uses `POST /v1/decisions` when selected. Observer saves bounded request and response captures for local inspection. A changed question definition keeps separate statistics; a request with several answers contributes usage and cost only once.
 
-Choice, Score and Noul answers are supported. Connections include TypeSafe, Jev through OpenRouter and local Laya. The dashboard's model catalog describes other integration paths; a catalog listing is not proof of live compatibility. See [connection setup](/docs/connecting).
+Choice, Score, Noul and supported Box answers retain their reported values. Protocol, model validation and credential provider are separate settings. The dashboard's 54-entry model catalog describes reviewed integration paths; a catalog listing is not proof of live compatibility. See [connection setup](/docs/connecting).
 
 ## Your data stays local
 
@@ -32,4 +32,4 @@ Input state is not saved by default. Definitions and answers may still contain s
 
 Observer does not host models, provide universal provider routing or replay inputs across question versions. Capture limits and interruptions can leave gaps in history; check collection health.
 
-See [what changed in 0.3.1](/docs/release-notes) and the [release README](https://github.com/LimePencil/jev-observer/blob/v0.3.1/README.md). These guides were reviewed against the published release on October 18, 2026.
+See [what changed in 0.4.0](/docs/release-notes) and the [release README](https://github.com/LimePencil/jev-observer/blob/v0.4.0/README.md). These guides were reviewed against the published release on October 26, 2026.

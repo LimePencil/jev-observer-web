@@ -1,6 +1,28 @@
 # Verification
 
-## Current release review: October 18, 2026 — Observer 0.3.1
+## Current release review: October 26, 2026 — Observer 0.4.0
+
+Aligned the website with the published [v0.4.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.4.0), published October 22 at 18:45:59 UTC, tag commit `cc9384ae0cc6f7a43b5926a9bee3dd52733cb670`. The release API and local tag agree. Later application changes are outside this update.
+
+### Changes
+
+- Updated version metadata, installers, release notes and all 11 guides. The homepage stays concise while explaining the broader decision-model scope.
+- Documented separate protocol/profile/provider settings, native Decisions and Cloudflare envelopes, typed Choice values, Box interpretation, the 54-entry catalog and distinct Omni import adapters.
+- Replaced obsolete compressed-capture claims with the bounded gzip/zstd and PNG/JPEG multipart inspection contract, including opt-in input retention and incomplete-capture behavior. The tagged README and legacy compatibility guide retain older wording; the tagged capture-decoding source, implementation and current-SDK fixture establish the shipped behavior.
+- Updated full-filename `.token` paths, first-upgrade sign-in, credential-path caveats and stopped-snapshot rollback guidance. New Box histories are not safe for older readers despite the unchanged database schema.
+- Updated privacy collision/identity rejection, export/retention behavior, dashboard operations, source module maps and separate legacy/current SDK validation scopes.
+- Recaptured all three tour images from the checksum-verified public Linux executable. The executable and authenticated settings reported 0.4.0; demo mode contained 720 synthetic requests, with no browser errors or external requests. See [screenshot provenance](screenshots.md).
+
+### Review evidence
+
+- Build, ESLint, TypeScript, formatting and whitespace checks passed on Node.js 22.22.1. No dependency versions changed.
+- The production-bundle browser suite reported **196 passed, 4 expected skips, 0 failures** across desktop/mobile Chromium, desktop Firefox and mobile WebKit. It includes navigation, all documentation routes and local anchors, search, clipboard recovery, screenshot dialogs, themes, reduced motion and accessibility scans. The runner saved a passed result; the surrounding local command received SIGTERM after the summary during cleanup. After final wording corrections, the site was rebuilt and all 12 documentation-route, search-count and section-navigation checks passed across the four browser projects, with a successful command exit.
+- Independent source review validated 30 unique versioned source links, 23 unique local documentation links and 25 source/local fragments, with no missing paths or anchors. A separate review checked connection, upgrade, privacy and developer commands against the tagged source and fixtures.
+- Visual review covered home, release notes, connection and installation at 1440px, 390px and 320px in light/dark themes: 24 combinations, with HTTP 200, no browser errors and no document/body horizontal overflow. All three tour images loaded; expanded-image controls remained visible. All 14 overflowing mobile code blocks scrolled correctly. Eleven representative screenshots were visually inspected.
+
+Website tests and synthetic demo capture do not establish live-provider compatibility, model quality or application load capacity. The application checkout and existing processes were left unchanged. Temporary capture and browser evidence lives outside the website checkout.
+
+## Previous release review: October 18, 2026 — Observer 0.3.1
 
 Aligned the site with published `v0.3.1`, source commit `5501c265f53c06462f7785a6ef1f277d094427d1`, while preserving the public MIT license and protected-main policy. The homepage remains brief; release notes explain query improvements, Linux saved credentials and the extra startup time/disk space needed for new indexes.
 
