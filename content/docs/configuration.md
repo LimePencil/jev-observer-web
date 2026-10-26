@@ -9,21 +9,25 @@ Configure Observer with startup flags. **Settings** shows the active configurati
 
 ## Listener and history
 
-| Option                    | Default                                | Purpose                                                           |
-| ------------------------- | -------------------------------------- | ----------------------------------------------------------------- |
-| `--port`                  | `8765`                                 | Port on `127.0.0.1`                                               |
-| `--db`                    | `.jev-observer/observer.sqlite`        | History location                                                  |
-| `--upstream`              | `https://api.typesafe.ai/v1/systemone` | One fixed upstream endpoint                                       |
-| `--upstream-auth`         | `bearer`                               | Use `none` only for a loopback server without a provider key      |
-| `--upstream-timeout-secs` | `300`                                  | Total upload, inference and response deadline; 1–86,400 seconds   |
-| `--provider`              | Inferred from known hosts              | Provider attribution and validation profile; set for local models |
-| `--retention-days`        | `7`                                    | Maximum record age                                                |
-| `--max-records`           | `1000000`                              | Soft retained-record cap                                          |
-| `--demo`                  | Disabled                               | Separate synthetic history; forwarding disabled                   |
+| Option                    | Default                                | Purpose                                                                  |
+| ------------------------- | -------------------------------------- | ------------------------------------------------------------------------ |
+| `--port`                  | `8765`                                 | Port on `127.0.0.1`                                                      |
+| `--db`                    | `.jev-observer/observer.sqlite`        | History location                                                         |
+| `--upstream`              | `https://api.typesafe.ai/v1/systemone` | One fixed upstream endpoint                                              |
+| `--upstream-auth`         | `bearer`                               | Use `none` only for a loopback server without a provider key             |
+| `--upstream-timeout-secs` | `300`                                  | Total upload, inference and response deadline; 1–86,400 seconds          |
+| `--provider`              | Inferred from known hosts              | Credential and billing provider; set for local models                    |
+| `--protocol`              | `systemone`                            | Wire contract: `systemone`, `openai-decisions` or `cloudflare-systemone` |
+| `--model-profile`         | Provider fallback                      | Reviewed catalog validator, separate from the requested model name       |
+| `--retention-days`        | `7`                                    | Maximum record age                                                       |
+| `--max-records`           | `1000000`                              | Soft retained-record cap                                                 |
+| `--demo`                  | Disabled                               | Separate synthetic history; forwarding disabled                          |
 
 Observer binds only to IPv4 loopback. Relative database paths resolve from the startup directory. Demo uses a separate `*.demo.sqlite` file.
 
-Remote upstreams require HTTPS; HTTP is accepted on loopback for local models and mocks. URLs cannot contain credentials, query parameters or fragments. An origin without a path uses `/v1/systemone`. See [connection examples](/docs/connecting).
+Remote upstreams require HTTPS; HTTP is accepted on loopback for local models and mocks. URLs cannot contain credentials, query parameters or fragments. An origin without a path uses the selected protocol's local path: `/v1/systemone` or `/v1/decisions`. Cloudflare requires its complete account/model endpoint. Set an explicit upstream when selecting a non-default protocol. See [connection examples](/docs/connecting).
+
+Unknown explicit model profiles are rejected. Without an explicit profile, the provider retains its legacy validation fallback. Choosing a catalog entry prepares a command; it does not change the running connection.
 
 Retention values must be positive. Cleanup runs every 30 seconds; these are record and age limits, not disk-byte limits.
 
@@ -36,7 +40,7 @@ Retention values must be positive. Cleanup runs every 30 seconds; these are reco
 | `--capture-state`     | Opt in to retaining input state and envelope media fields    |
 | `--redact-key KEY`    | Add a field name to redaction; repeat as needed              |
 
-Supply the database key through the environment. Sign in with username `observer` and the workspace access token printed by path at startup.
+Supply the database key through the environment. Sign in with username `observer` and the workspace access token printed by path at startup. Its filename is the complete database filename plus `.token`, such as `.jev-observer/observer.sqlite.token`. See [token upgrades](/docs/connecting#sign-in-and-register-a-provider-key) if coming from a legacy `*.access-token` workspace.
 
 For bearer mode, register a provider key in **Connect an application** and use its local client token in your SDK. For `--upstream-auth none`, authenticate locally with the workspace token; no authorization is sent upstream. [Complete credential setup](/docs/connecting).
 
@@ -56,7 +60,9 @@ A slot covers an active call through queued writing and persistence. The configu
 2 × capture slots × capture limit <= 512 MiB
 ```
 
-Defaults reach that budget, so increasing slots requires a smaller per-body limit. Buffers grow on demand; HTTP buffers and parsed-record overhead are additional.
+Defaults reach that budget, so increasing slots requires a smaller per-body limit. Buffers grow on demand. This is not a total process-memory cap: HTTP buffers, decoding state, parsed JSON and database work are additional.
+
+Supported gzip/zstd inspection applies `--capture-limit` independently to both raw and decoded bodies. The zstd window is limited to 8 MiB; supported image multipart bodies have additional part and header limits. See [transport inspection bounds](https://github.com/LimePencil/jev-observer/blob/v0.4.0/docs/capture-decoding.md#inspection-formats-and-limits).
 
 Size slots for concurrent calls plus queued writes. Full bodies can still forward when their saved captures are truncated. Full capture slots or queues drop observation work and report it in collection health.
 
@@ -82,6 +88,6 @@ Open **Settings**, or use the authenticated local API:
 curl --user observer http://127.0.0.1:8765/api/settings
 ```
 
-Curl prompts for the workspace token. The response excludes secrets and includes the version, configuration and offline model catalog. `/api/health` reports collection health with the same authentication.
+Curl prompts for the workspace token. The response excludes secrets and includes the version, protocol, model profile, provider, configuration and offline model catalog. `/api/health` reports collection health with the same authentication.
 
-[Full CLI reference](https://github.com/LimePencil/jev-observer/blob/v0.3.1/src/config.rs).
+[Full CLI reference](https://github.com/LimePencil/jev-observer/blob/v0.4.0/src/config.rs).

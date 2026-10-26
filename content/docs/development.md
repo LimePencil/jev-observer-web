@@ -5,7 +5,7 @@ section: "Developer guide"
 order: 8
 ---
 
-The [application repository](https://github.com/LimePencil/jev-observer/tree/v0.3.1) contains the Rust executable and React dashboard. This documentation website is a separate Next.js project; website changes do not rebuild Observer.
+The [application repository](https://github.com/LimePencil/jev-observer/tree/v0.4.0) contains the Rust executable and React dashboard. This documentation website is a separate Next.js project; website changes do not rebuild Observer.
 
 Use the pinned Rust **1.98.1** toolchain, a native C compiler, and Node.js **22.12 or later** with npm. See [installation](/docs/installation) for checkout instructions and Windows build prerequisites.
 
@@ -49,19 +49,40 @@ cargo clippy --locked --all-targets -- -D warnings
 cargo test --locked
 python3 scripts/test-install.py
 python3 scripts/test-decision-capture.py
+python3 scripts/test-model-catalog.py
+python3 scripts/test-token-layouts.py
 npx --prefix ui playwright install chromium
-npm test --prefix ui
+OBSERVER_UI_PREVIEW=1 npm test --prefix ui
 cargo build --release --locked
 OBSERVER_BINARY="$PWD/target/release/jev-observer" npm run test:integration --prefix ui
 ```
 
-The final command uses Bash. Browser interaction tests use synthetic API fixtures. Integration tests exercise the embedded dashboard against the real authenticated backend in temporary demo and encrypted live workspaces, without provider calls. Rust tests cover forwarding, storage, normalization and failure handling.
+The environment-variable commands use Bash. Browser interaction tests use synthetic API fixtures. Integration tests exercise the embedded dashboard against the real authenticated backend in temporary demo and encrypted live workspaces, without provider calls. Rust tests cover forwarding, storage, normalization and failure handling.
 
-See the [UI testing notes](https://github.com/LimePencil/jev-observer/blob/v0.3.1/ui/README.md) for production-preview checks and the [CI workflow](https://github.com/LimePencil/jev-observer/blob/v0.3.1/.github/workflows/ci.yml) for the complete release-metadata and license checks.
+See the [UI testing notes](https://github.com/LimePencil/jev-observer/blob/v0.4.0/ui/README.md) for production-preview checks and the [CI workflow](https://github.com/LimePencil/jev-observer/blob/v0.4.0/.github/workflows/ci.yml) for the complete release-metadata and license checks.
 
 ## Reproduce SDK compatibility
 
-The compatibility runner checks Python `typesafe-sdk==0.7.1` and JavaScript `@typesafe-ai/sdk@0.6.0` against a loopback mock using dummy credentials. It does not call a provider. Follow the [compatibility instructions](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/compatibility.md) for setup, assertions and separate live-inference evidence.
+Two separate loopback fixtures use dummy credentials without provider calls:
+
+| Fixture                                | Python / JavaScript pins                         | Scope                                                                                     |
+| -------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `scripts/sdk-compatibility.py`         | `typesafe-sdk==0.7.1` / `@typesafe-ai/sdk@0.6.0` | Legacy identity-encoded forwarding, grouping, redaction and accounting                    |
+| `scripts/current-sdk-compatibility.py` | `typesafe-sdk==0.7.5` / `@typesafe-ai/sdk@0.7.0` | Small JSON, default zstd, compressed image multipart and explicit compression disablement |
+
+The current fixture runs on Linux; it does not establish current-SDK behavior on every platform. Its [transport contract](https://github.com/LimePencil/jev-observer/blob/v0.4.0/docs/capture-decoding.md) differs from the older identity-only fixture. To reproduce it after a release build, use Python 3.12 (the locked fixture and CI runtime), install the dependencies in an isolated environment, and choose a fresh output filename; the runner refuses to overwrite an existing result:
+
+```bash
+python3.12 -m venv .venv-current-sdk
+.venv-current-sdk/bin/python -m pip install -r fixtures/current-sdk/python-requirements.txt
+npm ci --prefix fixtures/current-sdk --ignore-scripts --no-audit --no-fund
+.venv-current-sdk/bin/python scripts/current-sdk-compatibility.py \
+  --binary target/release/jev-observer \
+  --node-sdk "$PWD/fixtures/current-sdk/node_modules/@typesafe-ai/sdk" \
+  --output current-sdk-result.json
+```
+
+Follow the [legacy compatibility instructions](https://github.com/LimePencil/jev-observer/blob/v0.4.0/docs/compatibility.md) for the older runner and separate live-inference evidence. Synthetic fixtures do not establish provider availability or model quality.
 
 ## Measure representative load
 
@@ -75,4 +96,4 @@ node scripts/benchmark.mjs --binary=target/release/jev-observer \
 
 The harness uses a loopback mock and temporary encrypted database. Record the binary, host, workload and collection gaps alongside latency. Avoid concurrent builds or other load tests when comparing results.
 
-The [performance report](https://github.com/LimePencil/jev-observer/blob/v0.3.1/docs/performance.md) includes encrypted 0.2.0 measurements and older plaintext results. The [0.3.1 broad-history checks](https://github.com/LimePencil/jev-observer/blob/v0.3.1/reports/validation/broad-history/README.md) cover query correctness, startup index creation and rollback. The [October validation archive](https://github.com/LimePencil/jev-observer/blob/v0.3.1/reports/validation/october-2026/README.md) records later improvement evidence. Each result applies to its named source and workload; none is a universal 0.3.1 capacity guarantee.
+The [performance report](https://github.com/LimePencil/jev-observer/blob/v0.4.0/docs/performance.md) includes bounded-redaction diagnostics, encrypted 0.2.0 measurements and older plaintext results. The [0.3.1 broad-history checks](https://github.com/LimePencil/jev-observer/blob/v0.4.0/reports/validation/broad-history/README.md) cover query correctness, startup index creation and rollback. The [October validation archive](https://github.com/LimePencil/jev-observer/blob/v0.4.0/reports/validation/october-2026/README.md) records later improvement evidence. Each result applies to its named source and workload; none is a universal 0.4.0 capacity guarantee.

@@ -104,7 +104,7 @@ export default function Home() {
               <div className="flow-node">
                 <Code size={25} />
                 <strong>Your application</strong>
-                <span>TypeSafe SDK</span>
+                <span>Supported SDK or API</span>
               </div>
               <ArrowRight className="flow-arrow" size={23} />
               <div className="flow-node flow-observer">
@@ -127,7 +127,7 @@ export default function Home() {
             </div>
             <div className="panel-copy">
               <h3>Connect once. See more.</h3>
-              <p>Point your supported SDK at Observer.</p>
+              <p>Connect System One or native Decisions requests.</p>
               <Link href="/docs/connecting" className="text-link">
                 Connect your application <ArrowUpRight size={17} />
               </Link>
@@ -195,8 +195,8 @@ export default function Home() {
             <GitBranch size={23} />
             <p>
               <strong>MIT licensed. Still taking shape.</strong> A working
-              prototype for Jev and local Laya models, with native packages for
-              Linux, macOS and Windows.
+              prototype for Jev and compatible decision models, with packages
+              for Linux, macOS and Windows.
             </p>
             <a
               href={site.repo}

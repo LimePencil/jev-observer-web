@@ -53,13 +53,13 @@ PLAYWRIGHT_BASE_URL=https://jev-observer-web.vercel.app npm test
 - `design/image-prompt.md`: provenance for the original, now unused `public/images/observer-lens.webp` hero image.
 - `public/fonts/*-LICENSE.txt`: font licenses. Dashboard screenshots use synthetic data.
 
-The website and application repositories are public and MIT-licensed. Version 0.3.1 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
+The website and application repositories are public and MIT-licensed. Version 0.4.0 provides six native packages for Linux, macOS and Windows with checksum-verifying installers. Documentation must explain dashboard authentication, the live SQLCipher database key and registered client tokens. Demo history and explicit exports remain plaintext. Do not imply universal provider support, production readiness, or lossless capture.
 
-The application README and current source are authoritative. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, CLI defaults, API routes, import limits, and privacy behavior.
+The tagged application source and detailed contracts are authoritative. For 0.4.0 transport inspection, use `docs/capture-decoding.md` and the current-SDK fixture; the tagged README and compatibility guide retain older compressed-capture wording. Research proposals in the application repository are historical, not shipped-feature documentation. Update these guides when the application changes, particularly SDK pins, protocol and model-profile settings, CLI defaults, API routes, import limits, and privacy behavior.
 
-The latest alignment review on October 18, 2026 checked the published [v0.3.1 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.3.1) at [`5501c26`](https://github.com/LimePencil/jev-observer/commit/5501c265f53c06462f7785a6ef1f277d094427d1). Guides and screenshots target that release, not later changes on application `main`. Keep the homepage concise and link detailed contracts and validation evidence to the application repository.
+The latest alignment review on October 26, 2026 checked the published [v0.4.0 release](https://github.com/LimePencil/jev-observer/releases/tag/v0.4.0) at [`cc9384a`](https://github.com/LimePencil/jev-observer/commit/cc9384ae0cc6f7a43b5926a9bee3dd52733cb670). Guides and screenshots target that release, not later changes on application `main`. Keep the homepage concise and link detailed contracts and validation evidence to the application repository.
 
-Release updates should recheck installers, connection/authentication modes, import privacy and limits, history navigation, cost semantics and screenshot provenance. Preserve the difference between pausing visible updates and continuing collection. See `design/verification.md` for the checks performed.
+Release updates should recheck installers, connection/authentication modes, token migration, new answer kinds and rollback compatibility, capture decoding, import privacy and limits, history navigation, cost semantics and screenshot provenance. Preserve the difference between pausing visible updates and continuing collection. See `design/verification.md` for the checks performed.
 
 ## Scope
 
