@@ -1,0 +1,5 @@
+kr.svg and us.svg are from flag-icons by Panayiotis Lipiridis.
+Source: https://github.com/lipis/flag-icons
+Revision: ac7e0eb3259eb62aa6100c435607e2fe03896a97
+Original paths: flags/4x3/kr.svg and flags/4x3/us.svg
+License: MIT (see LICENSE.txt)
