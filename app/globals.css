@@ -1308,7 +1308,7 @@ a:hover > .text-link svg {
 .not-found .button-row {
   margin-top: 28px;
 }
-@media (prefers-reduced-motion: no-preference) {
+@media screen and (prefers-reduced-motion: no-preference) {
   .reveal-ready {
     opacity: 0;
     transform: translateY(28px);
