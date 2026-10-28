@@ -1490,6 +1490,9 @@ a:hover > .text-link svg {
     top: 65px;
     left: 0;
     right: 0;
+    max-height: calc(100dvh - 65px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--surface);
     border-bottom: 1px solid var(--line);
     padding: 14px 22px 20px;

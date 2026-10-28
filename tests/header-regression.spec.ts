@@ -174,3 +174,38 @@ test("system theme remains usable when preference storage is unavailable", async
   await toggle.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+
+for (const locale of ["en", "ko"] as const) {
+  test(`mobile navigation keeps every link reachable on a short ${locale} viewport`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 667, height: 240 });
+    await page.goto(locale === "en" ? "/" : "/ko");
+    await page
+      .getByRole("button", {
+        name: locale === "en" ? "Open navigation" : "메뉴 열기",
+        exact: true,
+      })
+      .click();
+    const navigation = page.getByRole("navigation", {
+      name: locale === "en" ? "Mobile navigation" : "모바일 메뉴",
+      exact: true,
+    });
+    await expect(navigation).toBeInViewport({ ratio: 1 });
+    for (const link of await navigation.getByRole("link").all()) {
+      await link.focus();
+      await expect(link).toBeInViewport({ ratio: 1 });
+    }
+    await expect
+      .poll(() => navigation.evaluate((element) => element.scrollTop))
+      .toBeGreaterThan(0);
+    await page.keyboard.press("Escape");
+    await expect(navigation).not.toBeVisible();
+    await expect(
+      page.getByRole("button", {
+        name: locale === "en" ? "Open navigation" : "메뉴 열기",
+        exact: true,
+      }),
+    ).toBeFocused();
+  });
+}
