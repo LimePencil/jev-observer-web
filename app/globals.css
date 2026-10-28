@@ -1833,6 +1833,35 @@ a:hover > .text-link svg {
     font-size: 9px;
   }
 }
+@media (max-height: 300px) {
+  .search-dialog {
+    max-height: calc(100dvh - 16px);
+    margin-block: 8px;
+  }
+  .search-input-row {
+    padding-block: 8px;
+  }
+  .search-results {
+    max-height: none;
+    padding: 8px;
+  }
+  .search-hint {
+    margin: 0 4px 4px;
+  }
+  .search-result {
+    padding-block: 8px;
+  }
+  .search-result span,
+  .search-result p {
+    display: none;
+  }
+  .search-footer {
+    padding: 6px 12px;
+  }
+  .search-footer > span:first-child {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
