@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 for (const route of ["/", "/ko"]) {
-  for (const width of [320, 768]) {
+  for (const width of [320, 400, 401, 768]) {
     for (const increasedSpacing of [false, true]) {
       test(`${route} workflow labels fit a ${width}px screen with ${increasedSpacing ? "increased" : "default"} text spacing`, async ({
         page,
@@ -37,10 +37,26 @@ for (const route of ["/", "/ko"]) {
                 const range = document.createRange();
                 range.selectNodeContents(label);
                 const text = range.getBoundingClientRect();
+                const words = Array.from(label.childNodes).flatMap((child) => {
+                  if (child.nodeType !== Node.TEXT_NODE) return [];
+                  return Array.from(
+                    (child.textContent ?? "").matchAll(/\S+/g),
+                    (match) => {
+                      const word = document.createRange();
+                      word.setStart(child, match.index);
+                      word.setEnd(child, match.index + match[0].length);
+                      return {
+                        text: match[0],
+                        lines: word.getClientRects().length,
+                      };
+                    },
+                  );
+                });
                 return {
                   text: label.textContent,
                   left: text.left,
                   right: text.right,
+                  words,
                 };
               },
             ),
@@ -58,6 +74,9 @@ for (const route of ["/", "/ko"]) {
           expect(label.right, label.text!).toBeLessThanOrEqual(
             dimensions.right,
           );
+          for (const word of label.words) {
+            expect(word.lines, `${word.text} should not split`).toBe(1);
+          }
         }
       });
     }
