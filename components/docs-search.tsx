@@ -26,6 +26,7 @@ export function DocsSearch({
 }) {
   const ko = locale === "ko";
   const pathname = usePathname();
+  const previousPathname = useRef(pathname);
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const resultLinks = useRef<(HTMLAnchorElement | null)[]>([]);
@@ -36,7 +37,10 @@ export function DocsSearch({
     input.current?.select();
   }, []);
   useEffect(() => {
-    dialog.current?.close();
+    // The initial effect may run after a click replayed during hydration.
+    // Only navigation should dismiss a search the user has already opened.
+    if (previousPathname.current !== pathname) dialog.current?.close();
+    previousPathname.current = pathname;
   }, [pathname]);
   useEffect(() => {
     const onKey = (event: globalThis.KeyboardEvent) => {
